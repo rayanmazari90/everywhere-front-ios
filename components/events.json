@@ -1,0 +1,31 @@
+{
+    "events": [
+      {
+        "id": 1,
+        "title": "Liberty club",
+        "description": "A book fair for all book lovers",
+        "location": {
+          "latitude": 40.432703,
+          "longitude": -3.678837
+        }
+      },
+      {
+        "id": 2,
+        "title": "Madrid Music Festival",
+        "description": "A music festival featuring local artists",
+        "location": {
+          "latitude": 40.419305,
+          "longitude": -3.693956
+        }
+      },
+      {
+        "id": 3,
+        "title": "Madrid Film Festival",
+        "description": "A film festival showcasing local talent",
+        "location": {
+          "latitude": 40.415342,
+          "longitude": -3.700910
+        }
+      }
+    ]
+  }

@@ -1,4 +1,4 @@
-/* 
+
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 // define a service user a base URL
@@ -61,4 +61,4 @@ export const { useSignupUserMutation, useLoginUserMutation, useLogoutUserMutatio
 
 export default appApi;
 
-*/
+

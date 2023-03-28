@@ -1,7 +1,7 @@
-/*import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./features/userSlice";
 import appApi from "./services/appApi";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from 'react-native';
 // persist our store
 import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
@@ -31,4 +31,3 @@ const store = configureStore({
 });
 
 export default store;
-*/

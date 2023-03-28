@@ -51,5 +51,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<array>
+      <string>icon.png</string>
+
+    </array>
 </dict>
 </plist>

@@ -1,9 +1,64 @@
-import React from 'react';
+
+import React, { useReducer } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import TabNavigator from "./components/Tabnavigator";
+import { Provider } from "react-redux";
+import store from "./store";
+
+//Import pages 
+import Home from './screens/Home';
+import Login from './screens/Login';
+import SignUp from './screens/SignUp';
+import VerifyEmailScreen from './screens/VerifyEmailScreen';
+import Mape from './screens/Mapcomp';
+
+
+
+const Stack = createStackNavigator();
+
+function AuthStack() {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="SignUp" component={SignUp} />
+            <Stack.Screen name="VerifyEmailScreen" component={VerifyEmailScreen} />
+            <Stack.Screen name="Login" component={Login} />
+        </Stack.Navigator>
+    );
+}
+
+function MainTabs() {
+    return (
+        <TabNavigator />
+    );
+}
+
+const App = () => {
+
+    return (
+        <Provider store={store}>
+            <NavigationContainer>
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="Auth" component={AuthStack} />
+                    <Stack.Screen name="Main" component={MainTabs} />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </Provider>
+    );
+};
+export default App;
+
+
+
+/*import React from 'react';
 import { Platform, StyleSheet, View, Text } from 'react-native';
 import MapboxGL ,{ ShapeSource, SymbolLayer , Marker, MarkerView} from '@rnmapbox/maps';
 import MapView from 'react-native-maps';
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigator from "./components/Tabnavigator";
+import { Provider } from "redux";
+import store from "./store";
 
 //
 
@@ -49,3 +104,4 @@ const styles = StyleSheet.create({
   }
 });
 
+*/

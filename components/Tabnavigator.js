@@ -1,8 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform, StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
-import Home from "./Home";
+import Home from "../screens/Home";
 import Mapcomp from "../screens/Mapcomp";
-import Profile from "../components/profile"
+import Profile from "../screens/profile"
 //import Profile from "../screens/Profile";
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton= ({children, onPress}) =>(

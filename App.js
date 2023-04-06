@@ -14,7 +14,8 @@ import store from "./store";
 import Home from './screens/Home';
 import Login from './screens/Login';
 import SignUp from './screens/SignUp';
-
+import ChatScreen from './screens/ChatScreen';
+import ChatsScreen from './screens/ChatScreen';
 import VerifyEmailScreen from './screens/VerifyEmailScreen';
 import Mape from './screens/Mapcomp';
 
@@ -32,6 +33,7 @@ function AuthStack() {
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="VerifyEmailScreen" component={VerifyEmailScreen} />
             <Stack.Screen name="Login" component={Login} />
+            
         </Stack.Navigator>
     );
 }
@@ -51,6 +53,8 @@ const App = () => {
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="Auth" component={AuthStack} />
                     <Stack.Screen name="Main" component={MainTabs} />
+                    <Stack.Screen name="Chats" component={ChatsScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Chat" component={ChatScreen} />
                 </Stack.Navigator>
             </NavigationContainer>
             

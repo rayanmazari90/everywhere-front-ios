@@ -4,6 +4,8 @@ import Home from "../screens/Home";
 import Mapcomp from "../screens/Mapcomp";
 import Profile from "../screens/profile";
 import Events from '../screens/Events';
+import ChatsScreen from "../screens/ChatsScreen"
+
 //import Profile from "../screens/Profile";
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton= ({children, onPress}) =>(
@@ -110,7 +112,7 @@ const TabNavigator = () => {
       }}
       
       />
-      <Tab.Screen name="Chat" component={Home} options={{
+      <Tab.Screen name="ChatsScreen" component={ChatsScreen} options={{
         tabBarIcon: ({focused}) => (
             <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                 <Image 

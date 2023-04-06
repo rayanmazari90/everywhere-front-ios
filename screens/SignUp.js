@@ -84,50 +84,50 @@ const SignUp = (props) => {
                 
                 <View
                    style={styles.form}>
-                    <Text style={styles.subTitle}>
-                        Welcome to everywhere
-                    </Text>
-                    <Text
-                    style={styles.label}>
-                    Create a new account
-                </Text>
-                    <Field placeholder="Name" onChangeText={(text) => setName(text)} value={name} />
-                    <Field
-                        placeholder="Email / Username"
-                        keyboardType={'email-address'}
-                        onChangeText={handleEmailChange}
-                        value={email}
-                        rightElement={<EmailValidityIndicator isValid={isEmailValid} />}
-                    />
+                        <Text style={styles.subTitle}>
+                            Welcome to everywhere
+                        </Text>
+                        <Text
+                        style={styles.label}>
+                        Create a new account
+                        </Text>
+                        <Field placeholder="Name" onChangeText={(text) => setName(text)} value={name} />
+                        <Field
+                            placeholder="Email / Username"
+                            keyboardType={'email-address'}
+                            onChangeText={handleEmailChange}
+                            value={email}
+                            rightElement={<EmailValidityIndicator isValid={isEmailValid} />}
+                        />
                     
 
-                    <Field
-                        placeholder="Password"
-                        secureTextEntry={true}
-                        onChangeText={(text) => setPassword(text)}
-                        value={password}
-                    />
-                    <Field
-                        placeholder="Confirm Password"
-                        secureTextEntry={true}
-                        onChangeText={(text) => setConfirmPassword(text)}
-                        value={confirmPassword}
-                    />
-                    <View style={{ width: '100%', alignItems: 'center' }}>
-                        <View style={{ display: 'flex', flexDirection: 'row', width: '78%', paddingRight: 16 , paddingTop:10, paddingBottom:10}}>
-                            <Text numberOfLines={3} ellipsizeMode="tail" style={{ color: 'grey', fontSize: 16,textAlign: "center"}}>
-                                By signing up, you agree to our{' '}
-                                <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 16 }}>
-                                    Terms & Conditions
+                        <Field
+                            placeholder="Password"
+                            secureTextEntry={true}
+                            onChangeText={(text) => setPassword(text)}
+                            value={password}
+                        />
+                        <Field
+                            placeholder="Confirm Password"
+                            secureTextEntry={true}
+                            onChangeText={(text) => setConfirmPassword(text)}
+                            value={confirmPassword}
+                        />
+                        <View style={{ width: '100%', alignItems: 'center' }}>
+                            <View style={{ display: 'flex', flexDirection: 'row', width: '78%', paddingRight: 16 , paddingTop:10, paddingBottom:10}}>
+                                <Text numberOfLines={3} ellipsizeMode="tail" style={{ color: 'grey', fontSize: 16,textAlign: "center"}}>
+                                    By signing up, you agree to our{' '}
+                                    <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 16 }}>
+                                        Terms & Conditions
+                                    </Text>
+                                    {' '}
+                                    <Text style={{ color: 'grey', fontSize: 16 }}>and </Text>
+                                    <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 16 }}>
+                                        Privacy Policy
+                                    </Text>
                                 </Text>
-                                {' '}
-                                <Text style={{ color: 'grey', fontSize: 16 }}>and </Text>
-                                <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 16 }}>
-                                    Privacy Policy
-                                </Text>
-                            </Text>
+                            </View>
                         </View>
-                    </View>
                     <Btn
                         textColor="white"
                         bgColor={darkGreen}
@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
         marginBottom: Dimensions.get('window').height * 0.02,
     },
     form: {
+        flex: 1,
         backgroundColor: 'white',
         height: Dimensions.get('window').height * 0.7,
         width: '90%',

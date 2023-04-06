@@ -25,22 +25,22 @@ export default function Profile() {
                 </View>
 
                 <View style={styles.infoContainer}>
-                    <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>Rayan Mazari</Text>
+                    <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>Rayane Mazari</Text>
                     <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Photographer</Text>
                 </View>
 
                 <View style={styles.statsContainer}>
                     <View style={styles.statsBox}>
                         <Text style={[styles.text, { fontSize: 24 }]}>483</Text>
-                        <Text style={[styles.text, styles.subText]}>Posts</Text>
+                        <Text style={[styles.text, styles.subText]}>Events Attended</Text>
                     </View>
                     <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
                         <Text style={[styles.text, { fontSize: 24 }]}>45,844</Text>
-                        <Text style={[styles.text, styles.subText]}>Followers</Text>
+                        <Text style={[styles.text, styles.subText]}>Friends</Text>
                     </View>
                     <View style={styles.statsBox}>
                         <Text style={[styles.text, { fontSize: 24 }]}>302</Text>
-                        <Text style={[styles.text, styles.subText]}>Following</Text>
+                        <Text style={[styles.text, styles.subText]}>Tokens</Text>
                     </View>
                 </View>
 

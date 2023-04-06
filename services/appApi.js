@@ -6,7 +6,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const appApi = createApi({
     reducerPath: "appApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://192.168.1.33:5001",
+        baseUrl: "http://172.20.10.5:5001",
     }),
 
     endpoints: (builder) => ({
@@ -30,6 +30,7 @@ const appApi = createApi({
                 },
             }),
         }),
+        
         logoutUser: builder.mutation({
             query: (payload) => ({
                 url: "users/logout",
@@ -39,25 +40,28 @@ const appApi = createApi({
         }),
 
         verifyUser: builder.mutation({
-            query: (user) => ({
-                url: "/users/verify",
-                method: "GET",
-                body: user,
+            query: ({ email, verificationCode }) => ({
+              url: "/users/verify",
+              method: "POST",
+              body: {
+                email,
+                verificationCode,
+              },
             }),
-        }),
+          }),
         
-        clubs: builder.mutation({
-            query: (user) => ({
+        clubsget: builder.mutation({
+            query: (payload) => ({
                 url: "/users/Maps",
                 method: "GET",
-                body: user,
+                body: payload,
             }),
         }),
 
     }),
 });
 
-export const { useSignupUserMutation, useLoginUserMutation, useLogoutUserMutation, useVerifyUserMutation } = appApi;
+export const { useSignupUserMutation, useLoginUserMutation, useLogoutUserMutation, useVerifyUserMutation, useClubsgetMutation } = appApi;
 
 export default appApi;
 

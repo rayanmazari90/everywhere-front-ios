@@ -2,7 +2,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform, StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import Home from "../screens/Home";
 import Mapcomp from "../screens/Mapcomp";
-import Profile from "../screens/profile"
+import Profile from "../screens/profile";
+import Events from '../screens/Events';
 //import Profile from "../screens/Profile";
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton= ({children, onPress}) =>(
@@ -68,7 +69,7 @@ const TabNavigator = () => {
         ),
       }}/>
 
-        <Tab.Screen name="Events" component={Home} options={{
+        <Tab.Screen name="Events" component={Events} options={{
             tabBarIcon: ({focused}) => (
                 <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                     <Image 

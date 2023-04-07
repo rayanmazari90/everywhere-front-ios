@@ -1,12 +1,12 @@
 
 
 
-import React, { useReducer } from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import TabNavigator from "./components/Tabnavigator";
 import {StyleSheet, Pressable, View, Text,  Dimensions} from 'react-native';
-
+import SecureStorage from 'react-native-secure-storage';
 import { Provider } from "react-redux";
 import store from "./store";
 
@@ -46,6 +46,24 @@ function MainTabs() {
 
 
 const App = () => {
+  useEffect(() => {
+    // check if user is already authenticated and redirect to MainTabs screen if so
+    try {
+      SecureStorage.getItem("accessToken")
+      .then((accessToken) => {
+        if (accessToken) {
+          navigation.navigate('Main');
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+      
+    } catch (error) {
+     console.log("noaccestoken")
+    }
+    
+  }, []);
 
     return (
         <Provider store={store}>

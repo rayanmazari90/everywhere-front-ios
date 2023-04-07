@@ -8,6 +8,7 @@ import Field from '../components/Field';
 import { useLoginUserMutation } from "../services/appApi";
 import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import SecureStorage from 'react-native-secure-storage';
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -19,13 +20,32 @@ const Login = () => {
 
     async function handleLogin() {
         try {
-            /*const { data } = await loginUser({ email, password });*/
-            /*console.log(data);*/
+            const response  = await loginUser({ email, password });
+            console.log("hey", response);
+            if(response.data.status === 200){
+                console.log( "ceat la clef", response.data.key)
+                await SecureStorage.setItem('accessToken', 1111);
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Main' }],
+                });
 
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'Main' }],
-            });
+            }else{
+                Alert.alert(  
+                    'Incorrect Credentials',  
+                    'Wrong password or mail',  
+                    [  
+                        {  
+                            text: 'Cancel',  
+                            onPress: () => console.log('Cancel Pressed'),  
+                            style: 'cancel',  
+                        },  
+                        {text: 'OK', onPress: () => console.log('OK Pressed')},  
+                    ]  
+                );  
+            }
+
+            
         } catch (error) {
             console.error(error);
         }
@@ -174,3 +194,23 @@ const styles = StyleSheet.create({
 });
     
     export default Login;
+
+/*
+async function handleLogin() {
+        try {
+            console.log("cest lemail", email);
+            console.log("cest lemail", password);
+            const { data } = await loginUser({ email, password });
+            console.log(data);
+            const { accessToken } = data;
+            await SecureStorage.setItem('accessToken', accessToken);
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Main' }],
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+*/

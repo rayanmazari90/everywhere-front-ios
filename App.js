@@ -27,12 +27,12 @@ function AuthStack() {
     return (
         
       
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator >
           
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen name="VerifyEmailScreen" component={VerifyEmailScreen} />
-            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
+            <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
+            <Stack.Screen name="VerifyEmailScreen" component={VerifyEmailScreen} options={{ headerShown: false }}/>
+            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
             
         </Stack.Navigator>
     );
@@ -44,16 +44,17 @@ function MainTabs() {
     );
 }
 
+
 const App = () => {
 
     return (
         <Provider store={store}>
           
             <NavigationContainer>
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="Auth" component={AuthStack} />
-                    <Stack.Screen name="Main" component={MainTabs} />
-                    <Stack.Screen name="Chats" component={ChatsScreen} options={{ headerShown: false }} />
+                <Stack.Navigator >
+                    <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }}/>
+                    <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }}/>
+                    <Stack.Screen name="Chats" component={ChatsScreen} />
                     <Stack.Screen name="Chat" component={ChatScreen} />
                 </Stack.Navigator>
             </NavigationContainer>

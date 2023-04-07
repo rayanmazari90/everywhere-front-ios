@@ -7,12 +7,14 @@ import { darkGreen } from '../components/Constants';
 import Field from '../components/Field';
 import { useLoginUserMutation } from "../services/appApi";
 import { useNavigation } from '@react-navigation/native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loginUser, { isLoading, error }] = useLoginUserMutation();
     const navigation = useNavigation();
+    const [showPassword, setShowPassword] = useState(false);
     const { width, height } = Dimensions.get('window');
 
     async function handleLogin() {
@@ -52,10 +54,13 @@ const Login = () => {
                     />
                     <Field
                         placeholder="Password"
-                        secureTextEntry={true}
+                        secureTextEntry={!showPassword}
                         onChangeText={(text) => setPassword(text)}
                         value={password}
                         containerStyle={styles.inputContainer}
+                        rightElement={<TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                <Text style={styles.showHideButton}>{showPassword ? <MaterialCommunityIcons style={styles.send} name="eye-remove" size={20} color={darkGreen}/> : <MaterialCommunityIcons style={styles.send} name="eye" size={20} color={darkGreen}/>}</Text>
+                            </TouchableOpacity>}
                     />
                     <View style={styles.forgotContainer}>
                         <TouchableOpacity /*onPress={() => navigation.navigate('ForgotPassword')}*/>

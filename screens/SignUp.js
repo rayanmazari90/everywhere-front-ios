@@ -6,6 +6,9 @@ import { darkGreen } from '../components/Constants';
 import Field from '../components/Field';
 import { useNavigation } from '@react-navigation/native';
 import { useSignupUserMutation } from "../services/appApi";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+
 
 
 const SignUp = (props) => {
@@ -14,6 +17,8 @@ const SignUp = (props) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isEmailValid, setIsEmailValid] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigation = useNavigation();
     const [signupUser, { isLoading, error }] = useSignupUserMutation();
     function handleEmailChange(text) {
@@ -100,19 +105,28 @@ const SignUp = (props) => {
                             rightElement={<EmailValidityIndicator isValid={isEmailValid} />}
                         />
                     
-
-                        <Field
-                            placeholder="Password"
-                            secureTextEntry={true}
-                            onChangeText={(text) => setPassword(text)}
-                            value={password}
-                        />
-                        <Field
-                            placeholder="Confirm Password"
-                            secureTextEntry={true}
-                            onChangeText={(text) => setConfirmPassword(text)}
-                            value={confirmPassword}
-                        />
+                            <Field
+                                placeholder="Password"
+                                secureTextEntry={!showPassword}
+                                onChangeText={(text) => setPassword(text)}
+                                value={password}
+                                rightElement={<TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                <Text style={styles.showHideButton}>{showPassword ? <MaterialCommunityIcons style={styles.send} name="eye-remove" size={20} color={darkGreen}/> : <MaterialCommunityIcons style={styles.send} name="eye" size={20} color={darkGreen}/>}</Text>
+                            </TouchableOpacity>}
+                            />
+                            
+                            <Field
+                                placeholder="Confirm Password"
+                                secureTextEntry={!showConfirmPassword}
+                                onChangeText={(text) => setConfirmPassword(text)}
+                                value={confirmPassword}
+                                style={{ marginRight: 111 }}
+                                rightElement={ 
+                                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                <Text style={styles.showHideButton}>{showConfirmPassword ? <MaterialCommunityIcons style={styles.send} name="eye-remove" size={20} color={darkGreen}/> : <MaterialCommunityIcons style={styles.send} name="eye" size={20} color={darkGreen}/>}</Text>
+                            </TouchableOpacity>}
+                            />
+                            
                         <View style={{ width: '100%', alignItems: 'center' }}>
                             <View style={{ display: 'flex', flexDirection: 'row', width: '78%', paddingRight: 16 , paddingTop:10, paddingBottom:10}}>
                                 <Text numberOfLines={3} ellipsizeMode="tail" style={{ color: 'grey', fontSize: 16,textAlign: "center"}}>
@@ -199,6 +213,11 @@ const styles = StyleSheet.create({
         color: darkGreen,
         fontSize: Dimensions.get('window').height * 0.035,
         fontWeight: 'bold',
+    },
+    password: {
+        flexDirection: 'row',
+        alignItems: 'center',
+
     },
 });
 

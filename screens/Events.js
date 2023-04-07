@@ -150,7 +150,7 @@ const EventCarousel = () => {
             onChangeText={setSearchText}
             value={searchText}
             onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
+            onBlur={() => setIsSearchFocused(true)}
         />
         </View>
         <View style={styles.sectionContainer}>

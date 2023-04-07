@@ -32,7 +32,7 @@ const CustomTabBarButton= ({children, onPress}) =>(
 const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={{
-        headerShown: false,
+        
         
         tabBarStyle: { 
             position: "absolute",
@@ -49,6 +49,7 @@ const TabNavigator = () => {
         
     }}>
       <Tab.Screen name="Home" component={Profile} options={{
+        headerShown: false,
         tabBarIcon: ({focused}) => (
             <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                 <Image 
@@ -72,6 +73,7 @@ const TabNavigator = () => {
       }}/>
 
         <Tab.Screen name="Events" component={Events} options={{
+            headerShown: false,
             tabBarIcon: ({focused}) => (
                 <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                     <Image 
@@ -95,6 +97,7 @@ const TabNavigator = () => {
 
 
       <Tab.Screen name="Imbox" component={Mapcomp} options={{
+        headerShown: false,
         tabBarIcon: ({focused}) => (
                 <Image 
                 source={require('../assets/icons/mapcursor.png')}
@@ -112,7 +115,7 @@ const TabNavigator = () => {
       }}
       
       />
-      <Tab.Screen name="ChatsScreen" component={ChatsScreen} options={{
+      <Tab.Screen name="Chats" component={ChatsScreen} options={{
         tabBarIcon: ({focused}) => (
             <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                 <Image 
@@ -126,8 +129,7 @@ const TabNavigator = () => {
                 />
                 <Text
                 style={{ color: focused ? '#4d84e2' : '#748c94' , fontSize: 16}}
-                > 
-                    
+                >
                     Chat
                 </Text>
             </View>
@@ -135,6 +137,7 @@ const TabNavigator = () => {
         ),
       }}/>
       <Tab.Screen name="Settings" component={Home} options={{
+        headerShown: false,
         tabBarIcon: ({focused}) => (
             <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                 <Image 

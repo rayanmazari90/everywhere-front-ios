@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, View,  ImageBackground} from 'react-native';
+import {StyleSheet, View,  ImageBackground, TouchableOpacity} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import MapboxGL ,{ ShapeSource, SymbolLayer , Marker, MarkerView, Camera} from '@rnmapbox/maps';
+import ClubsPage from './Clubspage';
 import appApi, { useClubsgetMutation } from './../services/appApi';
 
 //import { UseClubsget } from './../services/appApi';
@@ -19,6 +21,7 @@ const Mapcomp = () => {
   const centerCoordinate = [-3.703790, 40.416775]; // Madrid coordinates
   const [clubsget, { isLoading, error }] = useClubsgetMutation();
   const [dataArr, setDataArr] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +43,9 @@ const Mapcomp = () => {
         id={club.clubname}
         title={club.clubname}
         coordinate={[club.lng, club.lat]}
+      >
+        <TouchableOpacity
+        onPress={() => navigation.navigate('ClubsPage')}
       >
         <ImageBackground
           source={{ uri: 'https://drive.google.com/uc?export=view&id='+club.image }}
@@ -72,6 +78,7 @@ const Mapcomp = () => {
 
           </ImageBackground>
         </ImageBackground>
+        </TouchableOpacity>
       </MapboxGL.MarkerView>
     ));
   };

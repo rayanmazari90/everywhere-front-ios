@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Text, Dimensions } from 'react-native';
 import Background from '../components/Background';
 import Btn from '../components/Btn';
-import { darkGreen, green } from '../components/Constants';
+import { darkGreen, green } from '../components/Constant_color';
 
 const Home = (props) => {
     const { width, height } = Dimensions.get('window');

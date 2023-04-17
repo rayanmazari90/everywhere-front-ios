@@ -35,7 +35,7 @@ export default function Profile() {
                         <Text style={[styles.text, styles.subText]}>Events Attended</Text>
                     </View>
                     <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
-                        <Text style={[styles.text, { fontSize: 24 }]}>45,844</Text>
+                        <Text style={[styles.text, { fontSize: 24 }]}>1,000</Text>
                         <Text style={[styles.text, styles.subText]}>Friends</Text>
                     </View>
                     <View style={styles.statsBox}>

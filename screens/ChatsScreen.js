@@ -1,25 +1,28 @@
+import {url_back}  from "../components/connection_url";
 import React, { useState, useLayoutEffect, useEffect } from 'react';
-import { View, StyleSheet, Text, FlatList, SafeAreaView } from 'react-native';
+import { green } from '../components/Constants';
+import ScrollZoomHeader from 'react-native-header-zoom-scroll';
+import { View, StyleSheet, Text, FlatList, SafeAreaView, Image, Dimensions, ImageBackground, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import ChatListItem from '../components/ChatListItem';
 import socket from "../utils/socket";
+import { useSelector } from "react-redux";
 
 const ChatsScreen = () => {
     const [visible, setVisible] = useState(false);
     //👇🏻 Dummy list of rooms
     const [conversations, setConversations] = useState([]);
-
-    //👇🏻 Runs when the component mounts
+    const user = useSelector((state) => state.user)
+    const userId = user.user._id
     useLayoutEffect(() => {
         function fetchGroups() {
-            fetch("http://172.20.10.5:5001/conversations")
+            fetch(url_back+`/conversations?member=${userId}`)
                 .then((res) => res.json())
                 .then((data) => setConversations(data))
                 .catch((err) => console.error(err));
         }
         fetchGroups();
-    }, []);
+    }, [userId]);
 
-    //👇🏻 Runs whenever there is new trigger from the backend
     useEffect(() => {
         socket.on("convslist", (conversations) => {
             setConversations(conversations);

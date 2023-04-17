@@ -1,12 +1,18 @@
+
+import bg from '../assets/leaves.jpg';
 import React, { useLayoutEffect, useState, useEffect } from 'react';
 import { StyleSheet, ImageBackground, FlatList, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
-import bg from '../assets/leaves.jpg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Message from '../components/Message';
 import socket from "../utils/socket";
+import { useSelector } from "react-redux";
+
+
 const ChatScreen = ({ route, navigation }) => {
+    const user = useSelector((state) => state.user)
+    const userId = user.user._id
     const [chatMessages, setChatMessages] = useState([]);
     const [message, setMessage] = useState("");
     const { id, name } = route.params;
@@ -29,6 +35,7 @@ const ChatScreen = ({ route, navigation }) => {
         socket.on("foundconv", (convmessages) => setChatMessages(convmessages));
     }, [socket]);
 
+
     const handleNewMessage = () => {
         const hour =
             new Date().getHours() < 10
@@ -41,18 +48,20 @@ const ChatScreen = ({ route, navigation }) => {
                 : `${new Date().getMinutes()}`;
 
         socket.emit("newMessage", {
-            conversation_id: id,
+            conversationId: id,
             message,
-            user: 'u1',
-            timestamp: { hour, mins },
+            sender: userId,
+            receiver: "642f445e61e7077b8ce3eb9c",
+            isRead: false
         });
+        setMessage("");
     };
 
     return (
         <ImageBackground source={bg} style={styles.bg}>
             {chatMessages[0] ? (<FlatList data={chatMessages}
                 renderItem={({ item }) => <Message message={item} />}
-                style={styles.list} inverted />
+                style={styles.list} />
             ) : (
                 ""
             )}

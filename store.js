@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./features/userSlice";
 import appApi from "./services/appApi";
-import AsyncStorage from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // persist our store
 import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";

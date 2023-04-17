@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, Dimensions, StyleSheet } from 'react-native';
 import Background from '../components/Background';
 import Btn from '../components/Btn';
-import { darkGreen } from '../components/Constants';
+import { darkGreen } from '../components/Constant_color';
 import Field from '../components/Field';
 import { useLoginUserMutation } from "../services/appApi";
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import SecureStorage from 'react-native-secure-storage';
 
@@ -18,38 +19,31 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const { width, height } = Dimensions.get('window');
 
+
     async function handleLogin() {
         try {
-            const response  = await loginUser({ email, password });
-            console.log("hey", response);
-            if(response.data.status === 200){
-                console.log( "ceat la clef", response.data.key)
-                await SecureStorage.setItem('accessToken', 1111);
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Main' }],
-                });
+            loginUser({ email, password }).then(({ data }) => {
+                if (data) {
+                    console.log(data);
+                    AsyncStorage.setItem('AccessToken', data.token);
+                    navigation.replace("Main");
+                }
+                else {
+                    Alert.alert(
+                        'Incorrect Credentials',
+                        'Wrong password or mail',
+                        [
 
-            }else{
-                Alert.alert(  
-                    'Incorrect Credentials',  
-                    'Wrong password or mail',  
-                    [  
-                        {  
-                            text: 'Cancel',  
-                            onPress: () => console.log('Cancel Pressed'),  
-                            style: 'cancel',  
-                        },  
-                        {text: 'OK', onPress: () => console.log('OK Pressed')},  
-                    ]  
-                );  
-            }
-
-            
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]
+                    );
+                }
+            });
         } catch (error) {
             console.error(error);
         }
     };
+    
 
     return (
         <Background>

@@ -6,9 +6,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import TabNavigator from "./components/Tabnavigator";
 import {StyleSheet, Pressable, View, Text,  Dimensions} from 'react-native';
-import SecureStorage from 'react-native-secure-storage';
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
+import { PersistGate } from 'redux-persist/integration/react';
+import persistStore from 'redux-persist/es/persistStore';
 import store from "./store";
+import data from './components/keystorage.json';
 
 //Import pages 
 import Home from './screens/Home';
@@ -17,7 +19,9 @@ import SignUp from './screens/SignUp';
 import ChatScreen from './screens/ChatScreen';
 import ChatsScreen from './screens/ChatScreen';
 import VerifyEmailScreen from './screens/VerifyEmailScreen';
-import Mape from './screens/Mapcomp';
+import ClubsPage from './screens/Clubspage';
+import Addfriends from './screens/Addfriends';
+
 
 
 
@@ -44,26 +48,21 @@ function MainTabs() {
     );
 }
 
-
+/*
 const App = () => {
-  useEffect(() => {
-    // check if user is already authenticated and redirect to MainTabs screen if so
     try {
-      SecureStorage.getItem("accessToken")
-      .then((accessToken) => {
-        if (accessToken) {
-          navigation.navigate('Main');
+        if (data.logged_in){
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Main' }],
+        });
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-      
+        
     } catch (error) {
-     console.log("noaccestoken")
+        console.error(error);
     }
+ 
     
-  }, []);
 
     return (
         <Provider store={store}>
@@ -74,12 +73,58 @@ const App = () => {
                     <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }}/>
                     <Stack.Screen name="Chats" component={ChatsScreen} />
                     <Stack.Screen name="Chat" component={ChatScreen} />
+                    <Stack.Screen name="ClubsPage" component={ClubsPage} options={{ headerShown: false }}/>
                 </Stack.Navigator>
             </NavigationContainer>
             
         </Provider>
     );
 };
+
+*/
+
+const App = () => {
+  const user = useSelector((state) => state.user)
+  console.log(user);
+  return (
+
+      < NavigationContainer >
+          <Stack.Navigator>
+             {!user ? (
+                  <>
+                      <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
+                  </>
+              ) : (
+                  <>
+                      <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+                      <Stack.Screen name="Chat" component={ChatScreen} />
+                      <Stack.Screen name="Addfriends" component={Addfriends} />
+                      <Stack.Screen name="ClubsPage" component={ClubsPage} options={{ headerShown: false }}/>
+                  </>
+              )}
+              {/*
+              <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
+              <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+              <Stack.Screen name="Chat" component={ChatScreen} />
+              <Stack.Screen name="Addfriends" component={Addfriends} />
+              */}
+          </Stack.Navigator>
+      </NavigationContainer >
+  );
+};
+
+
+const AppWrapper = () => {
+  const persistedStore = persistStore(store);
+  return (
+      <Provider store={store}>
+          <PersistGate loading={null} persistor={persistedStore}>
+              <App />
+          </PersistGate>
+      </Provider>
+  )
+}
+export default AppWrapper;
 
 
 const styles = StyleSheet.create({
@@ -99,7 +144,7 @@ const styles = StyleSheet.create({
 
 
 
-export default App;
+//export default App;
 
 
 

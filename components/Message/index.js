@@ -6,7 +6,7 @@ dayjs.extend(relativeTime);
 
 const Message = ({ message }) => {
     const isMyMessage = () => {
-        return message.user?.id === "u1";
+        return message.sender === "6414482b701c7ee1663e47c3";
     };
 
     return (
@@ -17,7 +17,7 @@ const Message = ({ message }) => {
                 backgroundColor: isMyMessage() ? 'lightgreen' : "white",
             }
         ]}>
-            <Text>{message.text}</Text>
+            <Text>{message.message}</Text>
             <Text style={styles.time}>{dayjs(message.createdAt).fromNow(true)}</Text>
         </View>
     );

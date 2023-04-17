@@ -1,3 +1,5 @@
 import { io } from "socket.io-client";
-const socket = io.connect("http://172.20.10.5:5001");
+import {url_back}  from "../components/connection_url";
+
+const socket = io.connect(url_back);
 export default socket;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Alert, View, Text, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
 import Background from '../components/Background';
 import Btn from '../components/Btn';
-import { darkGreen } from '../components/Constants';
+import { darkGreen } from '../components/Constant_color';
 import Field from '../components/Field';
 import { useNavigation } from '@react-navigation/native';
 import { useSignupUserMutation } from "../services/appApi";
@@ -128,15 +128,15 @@ const SignUp = (props) => {
                             />
                             
                         <View style={{ width: '100%', alignItems: 'center' }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', width: '78%', paddingRight: 16 , paddingTop:10, paddingBottom:10}}>
-                                <Text numberOfLines={3} ellipsizeMode="tail" style={{ color: 'grey', fontSize: 16,textAlign: "center"}}>
+                            <View style={{ display: 'flex', flexDirection: 'row', width: '78%',  justifyContent: "center"}}>
+                                <Text numberOfLines={3} ellipsizeMode="tail" style={{ color: 'grey', fontSize: 12,textAlign: "center"}}>
                                     By signing up, you agree to our{' '}
-                                    <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 16 }}>
+                                    <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 12 }}>
                                         Terms & Conditions
                                     </Text>
                                     {' '}
                                     <Text style={{ color: 'grey', fontSize: 16 }}>and </Text>
-                                    <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 16 }}>
+                                    <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 12 }}>
                                         Privacy Policy
                                     </Text>
                                 </Text>

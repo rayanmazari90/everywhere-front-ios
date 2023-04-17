@@ -1,10 +1,14 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform, StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
+
 import Home from "../screens/Home";
 import Mapcomp from "../screens/Mapcomp";
 import Profile from "../screens/profile";
 import Events from '../screens/Events';
-import ChatsScreen from "../screens/ChatsScreen"
+import ChatsScreen from "../screens/ChatsScreen";
+import ClubsPage from "../screens/Clubspage";
 
 //import Profile from "../screens/Profile";
 const Tab = createBottomTabNavigator();
@@ -30,6 +34,7 @@ const CustomTabBarButton= ({children, onPress}) =>(
 )
 
 const TabNavigator = () => {
+    const navigation = useNavigation();
   return (
     <Tab.Navigator screenOptions={{
         
@@ -49,7 +54,9 @@ const TabNavigator = () => {
         
     }}>
       <Tab.Screen name="Home" component={Profile} options={{
-        headerShown: false,
+         title: '',
+         headerShown: true,
+         headerTransparent: true,
         tabBarIcon: ({focused}) => (
             <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                 <Image 
@@ -73,7 +80,7 @@ const TabNavigator = () => {
       }}/>
 
         <Tab.Screen name="Events" component={Events} options={{
-            headerShown: false,
+             headerShown: false,
             tabBarIcon: ({focused}) => (
                 <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                     <Image 
@@ -97,7 +104,9 @@ const TabNavigator = () => {
 
 
       <Tab.Screen name="Imbox" component={Mapcomp} options={{
-        headerShown: false,
+         title: '',
+         headerShown: true,
+         headerTransparent: true,
         tabBarIcon: ({focused}) => (
                 <Image 
                 source={require('../assets/icons/mapcursor.png')}
@@ -111,7 +120,14 @@ const TabNavigator = () => {
         ),
         tabBarButton: (props) => (
             <CustomTabBarButton {...props}/>
-        )
+        ),
+        headerStyle: { backgroundColor: "whitesmoke" },
+        tabBarLabel: () => null,
+        headerRight: () => (
+            <TouchableOpacity style={{ marginRight: 20 }} onPress={() => navigation.navigate('Addfriends')}>
+                <FontAwesome name="user-plus" size={24} color="white" />
+            </TouchableOpacity>
+        ),
       }}
       
       />
@@ -136,8 +152,8 @@ const TabNavigator = () => {
             
         ),
       }}/>
-      <Tab.Screen name="Settings" component={Home} options={{
-        headerShown: false,
+      <Tab.Screen name="Settings" component={ClubsPage} options={{
+       
         tabBarIcon: ({focused}) => (
             <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                 <Image 

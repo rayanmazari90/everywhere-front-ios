@@ -1,4 +1,4 @@
 
 
 
-export const url_back = 'http://10.22.142.4:5001';
+export const url_back = 'http://172.20.10.4:5001';

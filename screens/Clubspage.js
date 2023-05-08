@@ -24,8 +24,7 @@ import Video from 'react-native-video';
 import React, { useState } from 'react';
 import { green,darkGreen } from '../components/Constant_color';
 import { useNavigation } from '@react-navigation/native';
-
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   View,
   Text,
@@ -45,13 +44,16 @@ import ScrollZoomHeader from 'react-native-header-zoom-scroll';
 const ClubsPage = () => {
   const navigation = useNavigation();
   const handleBackPress = () => {
-    navigation.goBack();
+    console.log("goBack");
+    setTimeout(() => {
+      navigation.goBack();
+    }, 0);
   };
     const club = [
         {id: 7,
             title: 'Liberty',
             image:'https://e00-elmundo.uecdn.es/assets/multimedia/imagenes/2018/03/21/15216321914946.jpg',
-            open: 'true',
+            open: false,
             hours: {
               startTime: '00:00 am',
               endTime: '06:00 am'
@@ -122,22 +124,26 @@ const ClubsPage = () => {
       >
         
     <View style={styles.container}> 
-    <View>
-        <TouchableOpacity
-        onPress={handleBackPress}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          padding: 10,
-          backgroundColor: 'blue',
-          zIndex: 0,
-        }}>
-        <Text style={{ color: 'red' }}>Go Back</Text>
-      </TouchableOpacity>
+      <View>
+          <TouchableOpacity
+          onPress={handleBackPress}
+          style={{
+            position: 'static',
+            top: 0,
+            left: 0,
+            flex:1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: Dimensions.get('window').width *0.13,
+            backgroundColor: '#f1f1f1',
+            zIndex: 10,
+            borderRadius:10,
+          }}>
+          <MaterialCommunityIcons style={{position: 'static'}} name="chevron-left" size={30} color={darkGreen}/>
+        </TouchableOpacity>
       </View>
         <View style={styles.sectionContainer}>
-            <Text style={styles.mainTitle}>{club[0].title}</Text>
+                  <Text style={styles.mainTitle}>{club[0].title}</Text>
             <View style={styles.underline}></View>
             <Text style={styles.sectionTitle}>What's now ?</Text>
             <FlatList
@@ -148,7 +154,17 @@ const ClubsPage = () => {
               keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
             />
             <Text style={styles.sectionTitle}>Description</Text>
-            
+            <View style={{ flexDirection: 'column', justifyContent: 'flex-start' }}>
+              <Text>
+                Status:{" "}
+                <Text style={{ padding: 0, color: club[0].open ? "blue" : "red" }}>
+                  {club[0].open ? "Open" : "Closed"}
+                </Text>
+              </Text>
+              <Text style={{ padding: 0, marginTop: 10 }}>Adress: {club[0].location}</Text>
+              <Text style={{ padding: 0, marginTop: 10 }}>Hours of opening: {club[0].hours.startTime} - {club[0].hours.endTime}</Text>
+            </View>
+            <Text style={styles.sectionTitle}>Events</Text>
         </View>
       </View>
     
@@ -191,10 +207,11 @@ const styles = StyleSheet.create({
 
 
   sectionTitle: {
-    fontSize: 24,
+      fontSize: 24,
       fontWeight: 'bold',
       marginBottom: 10,
       color: green ,
+      paddingTop: 30,
       
   },
   

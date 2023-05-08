@@ -2,13 +2,14 @@ import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import {useSelector} from "react-redux";
 dayjs.extend(relativeTime);
 
 const Message = ({ message }) => {
+    const user = useSelector((state) => state.user)
     const isMyMessage = () => {
-        return message.sender === "6414482b701c7ee1663e47c3";
+        return message.sender === user.user._id;
     };
-
     return (
         <View style={[
             styles.container,

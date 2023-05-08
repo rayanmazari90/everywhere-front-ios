@@ -11,7 +11,7 @@ const AddfriendItem = ({ friend }) => {
         const friendIds = [friend._id]; // assuming friend has an "id" property
 
         try {
-            const response = await fetch(url_back+`/users/${userId}/friends`, {
+            const response = await fetch(`http://10.22.142.4:5001/users/${userId}/friends`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

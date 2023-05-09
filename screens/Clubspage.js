@@ -21,97 +21,116 @@ export default Field;
 */
 
 import Video from 'react-native-video';
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { green,darkGreen } from '../components/Constant_color';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   View,
   Text,
-  ScrollView,
   FlatList,
   StyleSheet,
   Image,
   Dimensions,
-  ImageBackground,
-  TextInput,
+  ActivityIndicator,
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
 import ScrollZoomHeader from 'react-native-header-zoom-scroll';
 
 
+
+
 const ClubsPage = () => {
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const gray = '#CCCCCC';
+  const fontSize =15;
+  const icon_size= 20;
+  const route= useRoute();
   const navigation = useNavigation();
+  const [clubs, setClubs] = useState(null);
+
   const handleBackPress = () => {
     console.log("goBack");
     setTimeout(() => {
       navigation.goBack();
     }, 0);
   };
-    const club = [
-        {id: 7,
-            title: 'Liberty',
-            image:'https://e00-elmundo.uecdn.es/assets/multimedia/imagenes/2018/03/21/15216321914946.jpg',
-            open: false,
-            hours: {
-              startTime: '00:00 am',
-              endTime: '06:00 am'
-            },
-            rating:4,
-            location: "Calle de Juan Bravo, 31",
-             videos:[
-                {image: 'https://i.gifer.com/R2CI.mp4' , hour: '00:00 am', day:'14 mars'},
-                {image: 'https://i.gifer.com/AITL.mp4', hour: '08:30 am', day:'7 april'},
-                {image: 'https://i.gifer.com/FR6T.mp4', hour: '05:35 am', day:'12 febrary'},
-             ]
-        }
-        // Add more events as needed
-    ];
- 
-    const renderClubVideo = (club,  index) => {
-      return (
-          <View style={styles.clubContainer} key={'club-' + club.id}>
-            <Video
-              source={{ uri: club.image }}
-              muted={true}
-              repeat={true}
-              resizeMode='cover'
-              rate={1.0}
-              ignoreSilentSwitch='obey'
-              style={styles.eventImage}
-            />
-            <View style={styles.box}>
-              <Text style={styles.eventTitle}> {club.day} - {club.hour} </Text>
-            </View>
-          </View>
-          
-
-      );
-    };
-    
-    const renderClubVideos = () => {
-        return club[0].videos.map((club, index) => renderClubVideo(club, index));
-    };
-
   
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+        setClubs(route.params.club);
+        // Set isLoading to false when clubs data is available
+        if (route.params.club) {
+          setIsLoading(false);
+        }
+      }, [route.params.club]);
+      
+  const renderDay = (day) => {
+    if (!clubs) {
+      return null;
+    }
+    const dayColor = clubs.days_open.includes(day) ? "white" : gray;
+    const fontWeight = clubs.days_open.includes(day) ? 'bold' : 'normal';
+    const shortDay = day.slice(0, 3);
+    return (
+      <View style={{ padding: 5 }} key={day}>
+        <Text style={{ color: dayColor, fontWeight: fontWeight }}>{shortDay}</Text>
+      </View>
+    );
+  };
+  const today = new Date();
+  const todayDay = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(today);
+
+  // Check if the club is open today
+  const isOpenToday = clubs && clubs.days_open.includes(todayDay);
+  console.log(isOpenToday, todayDay )
+
+  const renderClubVideo = (video,  index) => {
+    return (
+        <View style={styles.clubContainer} key={'club-' + clubs._id+ '-video-' + index}>
+          <Video
+            source={{ uri: video.image }}
+            muted={true}
+            repeat={true}
+            resizeMode='cover'
+            rate={1.0}
+            ignoreSilentSwitch='obey'
+            style={styles.eventImage}
+          />
+          <View style={styles.box}>
+            <Text style={styles.eventTitle}> {video.day} - {video.hours} </Text>
+          </View>
+        </View>
+        
+
+    );
+  };
+    
+  const renderClubVideos = () => {
+      return clubs.videos.map((video, index) => renderClubVideo(video, index));
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={darkGreen} />
+      </View>
+    );
+  }
+
   return (
     
     <SafeAreaView  >
-      
-      
-    
     <ScrollZoomHeader
-        showsVerticalScrollIndicator={true}
+        showsVerticalScrollIndicator={false}
         smallHeaderHeight={
           0
         }
-        
-        headerHeight={200}
+        headerHeight={250}
         backgroundHeaderComponent={
-          
           <Image
-            source={{url:club[0].image}}
+            source={{url:clubs.background}}
             style={{
                 padding:0,
                 margin:0,
@@ -143,7 +162,7 @@ const ClubsPage = () => {
         </TouchableOpacity>
       </View>
         <View style={styles.sectionContainer}>
-                  <Text style={styles.mainTitle}>{club[0].title}</Text>
+                  <Text style={styles.mainTitle}>{clubs.clubname}</Text>
             <View style={styles.underline}></View>
             <Text style={styles.sectionTitle}>What's now ?</Text>
             <FlatList
@@ -153,18 +172,76 @@ const ClubsPage = () => {
               renderItem={({ item }) => item}
               keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
             />
-            <Text style={styles.sectionTitle}>Description</Text>
-            <View style={{ flexDirection: 'column', justifyContent: 'flex-start' }}>
-              <Text>
-                Status:{" "}
-                <Text style={{ padding: 0, color: club[0].open ? "blue" : "red" }}>
-                  {club[0].open ? "Open" : "Closed"}
-                </Text>
-              </Text>
-              <Text style={{ padding: 0, marginTop: 10 }}>Adress: {club[0].location}</Text>
-              <Text style={{ padding: 0, marginTop: 10 }}>Hours of opening: {club[0].hours.startTime} - {club[0].hours.endTime}</Text>
-            </View>
-            <Text style={styles.sectionTitle}>Events</Text>
+           <Text style={styles.sectionTitle}>Description</Text>
+              <View style={{ flexDirection: 'column', justifyContent: 'flex-start' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <MaterialCommunityIcons
+                    style={{ position: 'static' }}
+                    name="fire"
+                    size={icon_size}
+                    color={darkGreen}
+                  />
+                  <Text style={{ fontSize: fontSize }}>
+                    <Text style={{ fontWeight: 'bold', color: darkGreen }}> Status:</Text>{" "}
+                    <Text style={{ padding: 0, color: isOpenToday ? "green" : "red" }}>
+                      {isOpenToday ? "Open" : "Closed"}
+                    </Text>
+                  </Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                  <MaterialCommunityIcons
+                    style={{ position: 'static' }}
+                    name="map-marker"
+                    size={icon_size}
+                    color={darkGreen}
+                  />
+                  <Text style={{ padding: 0, fontSize: fontSize }}>
+                    <Text style={{ fontWeight: 'bold', color: darkGreen }}> Location </Text>{" "}
+                    {clubs.location}
+                  </Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                  <MaterialCommunityIcons
+                    style={{ position: 'static' }}
+                    name="party-popper"
+                    size={icon_size}
+                    color={darkGreen}
+                  />
+                  <Text style={{ padding: 0, fontSize: fontSize }}>
+                    <Text style={{ fontWeight: 'bold', color: darkGreen }}>
+                      {" "}
+                      Hours of opening{" "}
+                    </Text>
+                    {clubs.hours.startTime} - {clubs.hours.endTime}
+                  </Text>
+                </View>
+
+
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                    <MaterialCommunityIcons
+                      style={{ position: 'static' }}
+                      name="calendar-range"
+                      size={icon_size}
+                      color={darkGreen}
+                    />
+                    <Text style={{ padding: 0, fontSize: fontSize }}>
+                      <Text style={{ fontWeight: 'bold', color: darkGreen }}>
+                        {" "}
+                        Days open{" "}
+                      </Text>
+                      
+                    </Text>
+                    
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', marginTop: 10, borderRadius: 10, backgroundColor: darkGreen, padding: 5 }}>
+                        {daysOfWeek.map((day) => renderDay(day))}
+                  </View>
+              </View>
+
+              <Text style={styles.sectionTitle}>Events</Text>
         </View>
       </View>
     
@@ -181,7 +258,10 @@ const ClubsPage = () => {
 const styles = StyleSheet.create({
   container: {
       flex: 1,
+      position: "relative",
+      top: -35,
       backgroundColor: '#fff',
+      margin: 0 ,
       padding: 20,
       borderTopLeftRadius:30,
       borderTopRightRadius:30,
@@ -191,6 +271,7 @@ const styles = StyleSheet.create({
       shadowRadius: 5,
       shadowOffset: { width: 0, height: -3},
       elevation: 2,
+      zIndex: 20,
       paddingBottom:1000,
 
   },
@@ -209,7 +290,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
       fontSize: 24,
       fontWeight: 'bold',
-      marginBottom: 10,
+      marginBottom: 30,
       color: green ,
       paddingTop: 30,
       
@@ -263,6 +344,12 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
     fontSize: 12,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
 });
 

@@ -45,7 +45,7 @@ const Mapcomp = () => {
         coordinate={[club.lng, club.lat]}
       >
         <TouchableOpacity
-        onPress={() => navigation.navigate('ClubsPage')}
+        onPress={() => navigation.navigate('ClubsPage', { club: club })}
       >
         <ImageBackground
           source={{ uri: 'https://drive.google.com/uc?export=view&id='+club.image }}

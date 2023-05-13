@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { green } from '../components/Constant_color';
-
+import appApi, { useClubsgetMutation, useEventsgetMutation  } from './../services/appApi';
+import EventsPage from './EventsPage';
 import {
   View,
   Text,
@@ -14,10 +15,10 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
 import ScrollZoomHeader from 'react-native-header-zoom-scroll';
 
-
+/*
 const eventsForYou = [
   { id: 1, title: 'Los Pandas', image: 'https://panda-events.com/wp-content/uploads/2018/06/agence.jpg' },
   { id: 2, title: 'Amadeux', image: 'https://cdn.wegow.com/media/events/thanksgiving-at-amadeux/thanksgiving-at-amadeux-1667810699.313348.jpg' },
@@ -39,52 +40,99 @@ const Clubs = [
     // Add more events as needed
 ];
 
+*/
 
 
 const EventCarousel = () => {
+  const [clubsget, { isLoading: clubsIsLoading, error: clubsError }] = useClubsgetMutation();
+  const [eventsget, { isLoading: eventsIsLoading, error: eventsError }] = useEventsgetMutation();
+  const [ClubsArr, setClubsArr] = useState([]);
+  const [EventsArr, setEventsArr] = useState([]);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await clubsget();
+        setClubsArr(response.data);
+      } catch (err) {
+        console.error(err);
+        setMessage('Try again');
+      }
+    };
+    fetchData();
+  }, [clubsget]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await eventsget();
+        setEventsArr(response.data);
+      } catch (err) {
+        console.error(err);
+        setMessage('Try again');
+      }
+    };
+    fetchData();
+  }, [eventsget]);
+  const midpoint = Math.floor(EventsArr.length / 2);
+  const eventsForYou = EventsArr.slice(0, midpoint);
+  const moreEvents = EventsArr.slice(midpoint);
+  const Clubs  = ClubsArr;
+
+
   const [searchText, setSearchText] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const filteredEventsForYou = eventsForYou.filter((event) =>
-    event.title.toLowerCase().includes(searchText.toLowerCase())
+    event.eventName.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const filteredMoreEvents = moreEvents.filter((event) =>
-    event.title.toLowerCase().includes(searchText.toLowerCase())
+    event.eventName.toLowerCase().includes(searchText.toLowerCase())
   );
   const filterClubs = Clubs.filter((event) =>
-    event.title.toLowerCase().includes(searchText.toLowerCase())
+    event.clubname.toLowerCase().includes(searchText.toLowerCase())
   );
 
 
   const renderEvent = (event) => {
     return (
-        <View style={styles.eventContainer} key={'event-' + event.id}>
+        <View style={styles.eventContainer} key={'event-' + event._id}>
+          <TouchableOpacity
+              onPress={() => navigation.navigate('EventsPage', { club: event })}
+            >
         <ImageBackground
           style={styles.eventImage}
           imageStyle={styles.eventImage}
           source={{ uri: event.image }}
         >
           <View style={styles.box}>
-            <Text style={styles.eventTitle}>{event.title}</Text>
+            <Text style={styles.eventTitle}>{event.eventName}</Text>
           </View>
         </ImageBackground>
+        </TouchableOpacity>
       </View>
     );
   };
 
   const renderClub = (event) => {
     return (
-        <View style={styles.ClubContainer} key={event.id}>
+        <View style={styles.ClubContainer} key={event._id}>
+          <TouchableOpacity
+              onPress={() => navigation.navigate('ClubsPage', { club: event })}
+            >
         <ImageBackground
           style={styles.ClubImage}
           imageStyle={styles.ClubImage}
-          source={{ uri: event.image }}
+          source={{ uri: event.background }}
         >
           <View style={styles.box}>
-            <Text style={styles.eventTitle}>{event.title}</Text>
+            <Text style={styles.eventTitle}>{event.clubname}</Text>
           </View>
+          
         </ImageBackground>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -93,7 +141,6 @@ const EventCarousel = () => {
     if (isSearchFocused) {
       return filteredEventsForYou.map((event, index) => renderEvent(event, index));
     } else {
-      console.log('eventsForYou:', eventsForYou);
       return eventsForYou.map((event, index) => renderEvent(event, index));
     }
   };
@@ -102,7 +149,6 @@ const EventCarousel = () => {
     if (isSearchFocused) {
       return filteredMoreEvents.map((event, index) => renderEvent(event, index));
     } else {
-      console.log('moreEvents:', moreEvents);
       return moreEvents.map((event, index) => renderEvent(event, index));
     }
   };
@@ -111,7 +157,6 @@ const EventCarousel = () => {
     if (isSearchFocused) {
       return filterClubs.map((event, index) => renderClub(event, index));
     } else {
-      console.log('Clubs:', Clubs);
       return Clubs.map((event, index) => renderClub(event, index));
     }
   };
@@ -172,6 +217,7 @@ const EventCarousel = () => {
             renderItem={({ item }) => item}
             keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
             />
+            
         </View>
         <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Clubs</Text>

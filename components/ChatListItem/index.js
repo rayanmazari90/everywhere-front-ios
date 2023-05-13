@@ -1,18 +1,19 @@
 import { Text, View, Image, StyleSheet, Pressable } from 'react-native';
-import {url_back}  from "../connection_url";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useLayoutEffect, useEffect } from 'react';
+import {url_back}  from "../../components/connection_url";
+
 
 dayjs.extend(relativeTime, { threshold: 24 * 60 * 60 }); // show relative time in hours
 
 const ChatListItem = ({ chat }) => {
     const navigation = useNavigation();
     const [lastmessage, setlastMessage] = useState([]);
-    useLayoutEffect(() => {
-        function fetchGroups() {
-            fetch(url_back+`/messages/${chat.lastMessage}`, {
+    useEffect(() => {
+        function fetchLastMessage() {
+            fetch(`${url_back}/chat/messages/${chat.lastMessage}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -22,8 +23,8 @@ const ChatListItem = ({ chat }) => {
                 .then((data) => setlastMessage(data))
                 .catch((err) => console.error(err));
         }
-        fetchGroups();
-    }, []);
+        fetchLastMessage();
+    }, [chat.lastMessage, chat._id]);
     return (
         <Pressable onPress={() => navigation.navigate("Chat", { id: chat._id, name: chat.user.name })} style={styles.container}>
             <Image source={{ uri: chat.user.image }} style={styles.image} />

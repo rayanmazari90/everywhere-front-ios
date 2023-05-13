@@ -1,33 +1,36 @@
-import {url_back}  from "../components/connection_url";
-import React, { useState, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { green } from '../components/Constants';
 import ScrollZoomHeader from 'react-native-header-zoom-scroll';
 import { View, StyleSheet, Text, FlatList, SafeAreaView, Image, Dimensions, ImageBackground, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import ChatListItem from '../components/ChatListItem';
 import socket from "../utils/socket";
 import { useSelector } from "react-redux";
+import { useGetconvsMutation } from "../services/appApi";
 
 const ChatsScreen = () => {
     const [visible, setVisible] = useState(false);
-    //👇🏻 Dummy list of rooms
     const [conversations, setConversations] = useState([]);
-    const user = useSelector((state) => state.user)
-    const userId = user.user._id
-    useLayoutEffect(() => {
-        function fetchGroups() {
-            fetch(url_back+`/conversations?member=${userId}`)
-                .then((res) => res.json())
-                .then((data) => setConversations(data))
-                .catch((err) => console.error(err));
-        }
-        fetchGroups();
-    }, [userId]);
+    const user = useSelector((state) => state.user);
+    const userId = user.user._id;
+    const [getConvs, { data }] = useGetconvsMutation();
 
     useEffect(() => {
-        socket.on("convslist", (conversations) => {
-            setConversations(conversations);
+        getConvs({ member: userId }).then((result) => {
+            console.log("///////////////////////////////////")
+            console.log(result)
+            setConversations(result.data);
         });
-    }, [socket]);
+    }, [getConvs, userId]);
+
+    // Add this useEffect to listen for the 'convslist' event
+    useEffect(() => {
+        socket.on("convslist", (updatedConversations) => {
+            setConversations(updatedConversations);
+        });
+        return () => {
+            socket.off("convslist");
+        };
+    }, []);
 
     return (
         <SafeAreaView>

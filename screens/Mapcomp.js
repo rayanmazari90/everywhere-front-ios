@@ -28,6 +28,7 @@ const Mapcomp = () => {
       try {
         const response = await clubsget();
         setDataArr(response.data);
+        console.log("hello", dataArr);
       } catch (err) {
         console.error(err);
         setMessage('Try again');
@@ -91,14 +92,6 @@ const Mapcomp = () => {
 
   
 
-  //const clubs = UseClubsget();
-  const symbolLayerOptions = {
-    iconAllowOverlap: true,
-    iconSize: 20,
-    iconImage: '/Users/rayanmazari/Desktop/Everywhere_React_native/Everywhere-react/everywhere/Unknown-2.png', // Mapbox's built-in embassy icon
-    iconOffset: [0, -25],
-  };
-//  TEST
 
 
 

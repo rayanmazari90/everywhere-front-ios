@@ -21,14 +21,13 @@ import ScrollZoomHeader from 'react-native-header-zoom-scroll';
 
 
 
-const ClubsPage = () => {
+const EventsPage = () => {
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const gray = '#CCCCCC';
   const fontSize =15;
   const icon_size= 20;
   const route= useRoute();
   const navigation = useNavigation();
-  const [clubs, setClubs] = useState(null);
   const [events, setEvents] = useState(null);
 
   const handleBackPress = () => {
@@ -40,43 +39,23 @@ const ClubsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-        setClubs(route.params.club);
+        setClubs(route.params.event);
         // Set isLoading to false when clubs data is available
-        if (route.params.club) {
+        if (route.params.event) {
           setIsLoading(false);
         }
-      }, [route.params.club]);
+      }, [route.params.event]);
       
-  const renderDay = (day) => {
-    if (!clubs) {
-      return null;
-    }
-    const dayColor = clubs.days_open.includes(day) ? "white" : gray;
-    const fontWeight = clubs.days_open.includes(day) ? 'bold' : 'normal';
-    const shortDay = day.slice(0, 3);
-    return (
-      <View style={{ padding: 5 }} key={day}>
-        <Text style={{ color: dayColor, fontWeight: fontWeight }}>{shortDay}</Text>
-      </View>
-    );
-  };
-  const today = new Date();
-  const todayDay = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(today);
-
-  // Check if the club is open today
-  const isOpenToday = clubs && clubs.days_open.includes(todayDay);
-  const { data: eventsData, isLoading: isLoadings, isError, refetch } = useEventsByClubGetQuery(clubs ? clubs._id : null, {
-    enabled: !!clubs, // execute the query only when 'clubs' is available
-  });
 
   useEffect(() => {
-    if (clubs) {
+    if (event) {
       
-      loadEvents(clubs._id);
+      loadEvents(event._id);
     }
-  }, [clubs]);
+  }, [event]);
   
   // Inside loadEvents function
+  /*
   const loadEvents = async (clubId) => {
     try {
       const { data: eventsData } = await refetch(clubId); // manually fetch the events
@@ -85,32 +64,8 @@ const ClubsPage = () => {
       console.error(error);
     }
   };
+  */
 
-  const renderClubVideo = (video,  index) => {
-    return (
-        <View style={styles.clubContainer} key={'club-' + clubs._id+ '-video-' + index}>
-          <Video
-            source={{ uri: video.image }}
-            muted={true}
-            repeat={true}
-            resizeMode='cover'
-            rate={1.0}
-            ignoreSilentSwitch='obey'
-            style={styles.eventImage}
-          />
-          <View style={styles.box}>
-            <Text style={styles.eventTitle}> {video.day} - {video.hours} </Text>
-          </View>
-        </View>
-        
-        
-
-    );
-  };
-    
-  const renderClubVideos = () => {
-      return clubs.videos.map((video, index) => renderClubVideo(video, index));
-  };
 
   if (isLoading) {
     return (
@@ -157,7 +112,7 @@ const ClubsPage = () => {
         headerHeight={250}
         backgroundHeaderComponent={
           <Image
-            source={{url:clubs.background}}
+            source={{url:event.image}}
             style={{
                 padding:0,
                 margin:0,
@@ -189,16 +144,9 @@ const ClubsPage = () => {
         </TouchableOpacity>
       </View>
         <View style={styles.sectionContainer}>
-                  <Text style={styles.mainTitle}>{clubs.clubname}</Text>
+                  <Text style={styles.mainTitle}>{event.clubname}</Text>
             <View style={styles.underline}></View>
             <Text style={styles.sectionTitle}>What's now ?</Text>
-            <FlatList
-              data={renderClubVideos()}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => item}
-              keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
-            />
            <Text style={styles.sectionTitle}>Description</Text>
               <View style={{ flexDirection: 'column', justifyContent: 'flex-start'}}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -208,12 +156,10 @@ const ClubsPage = () => {
                     size={icon_size}
                     color={darkGreen}
                   />
-                  <Text style={{ fontSize: fontSize }}>
-                    <Text style={{ fontWeight: 'bold', color: darkGreen }}> Status:</Text>{" "}
-                    <Text style={{ padding: 0, color: isOpenToday ? "green" : "red" }}>
-                      {isOpenToday ? "Open" : "Closed"}
-                    </Text>
-                  </Text>
+                  <Text style={{ fontWeight: 'bold', color: darkGreen }}> Event Name </Text>{" "}
+
+                  {events.eventName}
+                  
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
@@ -224,8 +170,13 @@ const ClubsPage = () => {
                     color={darkGreen}
                   />
                   <Text style={{ padding: 0, fontSize: fontSize }}>
-                    <Text style={{ fontWeight: 'bold', color: darkGreen }}> Location </Text>{" "}
-                    {clubs.location}
+                    <Text style={{ fontSize: fontSize }}>
+                    <Text style={{ fontWeight: 'bold', color: darkGreen }}> Club:</Text>{" "}
+                    <Text style={{ padding: 0 }}>
+                      {event.club.name}
+                    </Text>
+                  </Text>
+                    
                   </Text>
                 </View>
 
@@ -239,37 +190,46 @@ const ClubsPage = () => {
                   <Text style={{ padding: 0, fontSize: fontSize }}>
                     <Text style={{ fontWeight: 'bold', color: darkGreen }}>
                       {" "}
-                      Hours of opening{" "}
+                      Date{" "}
                     </Text>
-                    {clubs.hours.startTime} - {clubs.hours.endTime}
+                    {events.dateAndHour}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                  <MaterialCommunityIcons
+                    style={{ position: 'relative' }}
+                    name="party-popper"
+                    size={icon_size}
+                    color={darkGreen}
+                  />
+                  <Text style={{ padding: 0, fontSize: fontSize }}>
+                    <Text style={{ fontWeight: 'bold', color: darkGreen }}>
+                      {" "}
+                      Number of Particpants {" "}
+                    </Text>
+                    {events.numberOfParticipants}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                  <MaterialCommunityIcons
+                    style={{ position: 'relative' }}
+                    name="party-popper"
+                    size={icon_size}
+                    color={darkGreen}
+                  />
+                  <Text style={{ padding: 0, fontSize: fontSize }}>
+                    <Text style={{ fontWeight: 'bold', color: darkGreen }}>
+                      {" "}
+                      Number of Tickets Left {" "}
+                    </Text>
+                    {events.numberOfTicketsLeft}
                   </Text>
                 </View>
 
 
-
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                    <MaterialCommunityIcons
-                      style={{ position: 'relative' }}
-                      name="calendar-range"
-                      size={icon_size}
-                      color={darkGreen}
-                    />
-                    <Text style={{ padding: 0, fontSize: fontSize }}>
-                      <Text style={{ fontWeight: 'bold', color: darkGreen }}>
-                        {" "}
-                        Days open{" "}
-                      </Text>
-                      
-                    </Text>
-                    
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', marginTop: 10, borderRadius: 10, backgroundColor: darkGreen, padding: 5 }}>
-                        {daysOfWeek.map((day) => renderDay(day))}
-                  </View>
-              </View>
-
-              <Text style={styles.sectionTitle}>Events</Text>
-              {events && events.map(renderEvents)}
+              <Text style={styles.sectionTitle}>Tickets</Text>
+              
+            </View>
         </View>
       </View>
     
@@ -425,4 +385,4 @@ eventTitle: {
     },
 });
 
-export default ClubsPage;
+export default EventsPage;

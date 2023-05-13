@@ -58,12 +58,29 @@ const appApi = createApi({
                 body: payload,
             }),
         }),
+        getconvs: builder.mutation({
+            query: (payload) => ({
+                url: "/chat/conversations",
+                method: "GET",
+                params: payload,
+            }),
+        }),
+        eventsByClubGet: builder.query({
+            query: (clubId) => `/events/events/${clubId}`,
+          }),
+
+        eventsget: builder.mutation({
+            query: (payload) => ({
+                url: "/events/events/",
+                method: "GET",
+                body: payload,
+            }),
+        }),
 
     }),
 });
 
-export const { useSignupUserMutation, useLoginUserMutation, useLogoutUserMutation, useVerifyUserMutation, useClubsgetMutation } = appApi;
-
+export const { useSignupUserMutation, useLoginUserMutation,useEventsgetMutation, useLogoutUserMutation, useVerifyUserMutation,useClubsgetMutation,useEventsByClubGetQuery, useGetconvsMutation } = appApi;
 export default appApi;
 
 

@@ -20,6 +20,8 @@ import ChatScreen from './screens/ChatScreen';
 import ChatsScreen from './screens/ChatScreen';
 import VerifyEmailScreen from './screens/VerifyEmailScreen';
 import ClubsPage from './screens/Clubspage';
+import EventsPage from './screens/EventsPage';
+import TicketsPage from './screens/TicketsPage';
 import Addfriends from './screens/Addfriends';
 
 
@@ -100,6 +102,10 @@ const App = () => {
                       <Stack.Screen name="Chat" component={ChatScreen} />
                       <Stack.Screen name="Addfriends" component={Addfriends} />
                       <Stack.Screen name="ClubsPage" component={ClubsPage} options={{ headerShown: false }}/>
+                      <Stack.Screen name="EventsPage" component={EventsPage} options={{ headerShown: false }}/>
+                      <Stack.Screen name="TicketsPage" component={TicketsPage} options={{ headerShown: true }}/>
+                      
+                      
                   </>
               )}
               {/*

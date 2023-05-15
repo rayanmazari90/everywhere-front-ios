@@ -129,6 +129,9 @@ const ClubsPage = () => {
 
     return (
         <View style={styles.ClubContainer} key={event._id}>
+          <TouchableOpacity
+              onPress={() => navigation.navigate('EventsPage', { event: event })}
+            >
             <ImageBackground
                 style={styles.ClubImage}
                 imageStyle={styles.ClubImage}
@@ -141,7 +144,9 @@ const ClubsPage = () => {
                 <View style={styles.box}>
                     <Text style={styles.eventname}>{event.eventName}</Text>
                 </View>
+                
             </ImageBackground>
+          </TouchableOpacity>
         </View>
     );};
 

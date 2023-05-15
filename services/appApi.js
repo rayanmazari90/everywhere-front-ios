@@ -76,11 +76,25 @@ const appApi = createApi({
                 body: payload,
             }),
         }),
+        ticketsByEventGet: builder.query({
+            query: (eventId) => `/tickets/tickets/${eventId}`,
+          }),
+        ticketsByUserPost: builder.mutation({
+            query: ({ eventId, userId, ticketId }) => ({
+              url: "/tickets/tickets/getticket",
+              method: "POST",
+              body: {
+                eventId,
+                userId,
+                ticketId,
+              },
+            }),
+          }),
 
     }),
 });
 
-export const { useSignupUserMutation, useLoginUserMutation,useEventsgetMutation, useLogoutUserMutation, useVerifyUserMutation,useClubsgetMutation,useEventsByClubGetQuery, useGetconvsMutation } = appApi;
+export const { useSignupUserMutation,useTicketsByUserPostMutation, useLoginUserMutation,useEventsgetMutation, useLogoutUserMutation, useVerifyUserMutation,useClubsgetMutation,useEventsByClubGetQuery,useTicketsByEventGetQuery, useGetconvsMutation } = appApi;
 export default appApi;
 
 

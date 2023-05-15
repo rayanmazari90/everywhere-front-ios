@@ -18,29 +18,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import ScrollZoomHeader from 'react-native-header-zoom-scroll';
 
-/*
-const eventsForYou = [
-  { id: 1, title: 'Los Pandas', image: 'https://panda-events.com/wp-content/uploads/2018/06/agence.jpg' },
-  { id: 2, title: 'Amadeux', image: 'https://cdn.wegow.com/media/events/thanksgiving-at-amadeux/thanksgiving-at-amadeux-1667810699.313348.jpg' },
-  { id: 3, title: 'Kapitales', image: 'https://madridlux.com/uploads/images/events/8/x528.webp?v=63798588494' },
-  // Add more events as needed
-];
 
-const moreEvents = [
-  {id: 4,title: 'Meet and Dance',image:'https://cdn.premiumguest.com/flyers/w_banners-icon-agosto-2022-meet-and-dance.jpg',},
-  { id: 5, title: 'Bardot Events', image: 'https://scontent.fmad19-1.fna.fbcdn.net/v/t39.30808-1/295463409_452221323581757_7169847205177968670_n.jpg?stp=cp0_dst-jpg_e15_p120x120_q65&_nc_cat=111&ccb=1-7&_nc_sid=dbb9e7&_nc_ohc=aJy0hR-dvQAAX8i3ZJO&_nc_ht=scontent.fmad19-1.fna&oh=00_AfCKwgidLC7pGur4xuuD0lWBOq3IVQ5s1XJ1QsMXrJqaKg&oe=643386D4' },
-  { id: 6, title: 'Event 6', image: 'https://picsum.photos/200/300' },
-  // Add more events as needed
-];
-
-const Clubs = [
-    {id: 7,title: 'Liberty',image:'https://e00-elmundo.uecdn.es/assets/multimedia/imagenes/2018/03/21/15216321914946.jpg',},
-    { id: 8, title: 'Icon', image: 'https://discotecasgratis.com/img/uploads/Property/26/PropertyPicture/large/1568024804_icon.jpg' },
-    { id: 9, title: 'Toyroom', image: 'https://phantom-elmundo.unidadeditorial.es/30419efcd028a74219e4308588fba1ba/crop/89x37/2879x1606/resize/746/f/webp/assets/multimedia/imagenes/2022/09/21/16637140980224.jpg' },
-    // Add more events as needed
-];
-
-*/
 
 
 const EventCarousel = () => {
@@ -100,7 +78,7 @@ const EventCarousel = () => {
     return (
         <View style={styles.eventContainer} key={'event-' + event._id}>
           <TouchableOpacity
-              onPress={() => navigation.navigate('EventsPage', { club: event })}
+              onPress={() => navigation.navigate('EventsPage', { event: event })}
             >
         <ImageBackground
           style={styles.eventImage}

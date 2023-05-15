@@ -8,8 +8,7 @@ import Mapcomp from "../screens/Mapcomp";
 import Profile from "../screens/profile";
 import Events from '../screens/Events';
 import ChatsScreen from "../screens/ChatsScreen";
-import ClubsPage from "../screens/Clubspage";
-import EventsPage from "../screens/EventsPage";
+import TicketScreen from "../screens/TicketsPage";
 //import Profile from "../screens/Profile";
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton= ({children, onPress}) =>(
@@ -152,7 +151,7 @@ const TabNavigator = () => {
             
         ),
       }}/>
-      <Tab.Screen name="Settings" component={EventsPage} options={{
+      <Tab.Screen name="Settings" component={TicketScreen} options={{
        
         tabBarIcon: ({focused}) => (
             <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>

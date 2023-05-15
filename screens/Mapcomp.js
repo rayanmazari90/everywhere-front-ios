@@ -28,7 +28,6 @@ const Mapcomp = () => {
       try {
         const response = await clubsget();
         setDataArr(response.data);
-        console.log("hello", dataArr);
       } catch (err) {
         console.error(err);
         setMessage('Try again');

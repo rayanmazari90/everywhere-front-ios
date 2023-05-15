@@ -3,68 +3,103 @@ import React, { useState ,useEffect} from 'react';
 import { green,darkGreen } from '../components/Constant_color';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useEventsByClubGetQuery } from "../services/appApi";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Image,
-  Dimensions,
-  ActivityIndicator,
-  TouchableOpacity,
-  SafeAreaView,
-  ImageBackground,
-} from 'react-native';
+import { useTicketsByEventGetQuery } from "../services/appApi";
+import { View, Text,StyleSheet, ImageBackground, TouchableOpacity, ActivityIndicator, Dimensions, Image, SafeAreaView } from 'react-native';
 import ScrollZoomHeader from 'react-native-header-zoom-scroll';
+import { format } from 'date-fns';
+
+
+const CountdownEvent = ({ eventDate }) => {
+  const calculateCountdown = () => {
+    const now = new Date();
+    const eventTime = new Date(eventDate);
+
+    const totalSeconds = Math.floor((eventTime - now) / 1000);
+
+    const days = Math.floor(totalSeconds / (60 * 60 * 24));
+    const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+    const seconds = Math.floor(totalSeconds % 60);
+
+    return { days, hours, minutes, seconds };
+  };
+
+  const [countdown, setCountdown] = useState(calculateCountdown());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown(calculateCountdown());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <View style={{}}>
+     <Text style={styles.sectionTitle}>
+      Time left Before Party!
+    </Text>
+  <View style={{alignItems: 'center' , backgroundColor: darkGreen, borderRadius: 10, padding: 10 }}>
+    <Text style={{ color: 'white', fontSize: 18 , fontWeight:'bold'}}>
+      {countdown.days} D  {countdown.hours} H  {countdown.minutes} Min  {countdown.seconds} Sec
+    </Text>
+  </View>
+</View>
+  );
+};
+
+
+
 
 
 
 
 const EventsPage = () => {
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const gray = '#CCCCCC';
   const fontSize =15;
   const icon_size= 20;
   const route= useRoute();
   const navigation = useNavigation();
-  const [events, setEvents] = useState(null);
+  const [event, setEvents] = useState(null);
+  const [tickets, setTickets] = useState(null);
+  const [expiredTickets, setExpiredTickets] = useState({});
 
   const handleBackPress = () => {
     setTimeout(() => {
       navigation.goBack();
     }, 0);
   };
-  
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-        setClubs(route.params.event);
+        setEvents(route.params.event);
         // Set isLoading to false when clubs data is available
         if (route.params.event) {
           setIsLoading(false);
         }
-      }, [route.params.event]);
-      
+  }, [route.params.event]);
+
+  
+
+  // Add a state variable to trigger refetch
+  const { data: TicketsData, isLoading: isLoadings, isError, refetch} = useTicketsByEventGetQuery(event ? event._id : null, {
+    enabled: !!event, // execute the query only when 'event' is available
+  }); // Pass the trigger as a dependency to the hook
 
   useEffect(() => {
-    if (event) {
-      
-      loadEvents(event._id);
-    }
-  }, [event]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      refetch();
+    });
   
-  // Inside loadEvents function
-  /*
-  const loadEvents = async (clubId) => {
-    try {
-      const { data: eventsData } = await refetch(clubId); // manually fetch the events
-      setEvents(eventsData); // update the state with fetched events
-    } catch (error) {
-      console.error(error);
+    return unsubscribe;
+  }, [navigation, refetch]);
+
+
+  useEffect(() => {
+    if (TicketsData) {
+      setTickets(TicketsData);
     }
-  };
-  */
+  }, [TicketsData]);
 
 
   if (isLoading) {
@@ -74,51 +109,107 @@ const EventsPage = () => {
       </View>
     );
   }
-  const renderEvents = (event) => {
-    // Parse date string
-    const eventDate = new Date(event.dateAndHour);
+      
 
-    // Format the date and month
-    const date = eventDate.getDate(); // Day of the month
-    const month = eventDate.toLocaleString('default', { month: 'long' }); // Month in text
+
+  
+  const renderTickets = (ticket, event) => {
+    const { description, numberOfTicketsLeft, ticketType, timeofexpir } = ticket;
+
+    const isExpired = expiredTickets[ticket._id];
 
     return (
-        <View style={styles.ClubContainer} key={event._id}>
-            <ImageBackground
-                style={styles.ClubImage}
-                imageStyle={styles.ClubImage}
-                source={{ uri: event.image }}
-            >
-                <View style={styles.overlay}>
-                    <Text style={styles.dateTitle}>{date}</Text>
-                    <Text style={styles.monthTitle}>{month}</Text>
-                </View>
-                <View style={styles.box}>
-                    <Text style={styles.eventname}>{event.eventName}</Text>
-                </View>
-            </ImageBackground>
-        </View>
-    );};
+      <View style={styles.ticketContainer} key={ticket._id}>
+        <TouchableOpacity
+          onPress={() => isExpired ? {} : navigation.navigate('TicketsPage', { event: event , ticket: ticket})}
+          activeOpacity={isExpired ? 1 : 0.2}
+          style={isExpired ? {opacity: 0.5} : {}}
+        >
+          <Text style={styles.ticketType}>{ticketType}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <Text style={styles.ticketExpiration}>Time Left </Text>
+            <CountdownTickets 
+              eventDate={event.dateAndHour} 
+              expirationHours={ticket.timeofexpir} 
+              onExpire={() => setExpiredTickets(prevState => ({...prevState, [ticket._id]: true}))}
+            />
+          </View>
+          <Text style={styles.ticketDescription}>{description}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+            <Text style={styles.ticketLeft}>Tickets Left: </Text><Text>{numberOfTicketsLeft}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const CountdownTickets = ({ eventDate, expirationHours, onExpire }) => {
+    const calculateCountdown = () => {
+      const now = new Date();
+      const eventTime = new Date(eventDate);
+      const expirationTime = new Date(eventTime.getTime() - (expirationHours * 60 * 60 * 1000)); // Subtract the hours
+  
+      const totalSeconds = Math.floor((expirationTime - now) / 1000);
+  
+      const days = Math.floor(totalSeconds / (60 * 60 * 24));
+      const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+      const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+      const seconds = Math.floor(totalSeconds % 60);
+  
+      const isExpired = totalSeconds <= 0;
+  
+      return { days, hours, minutes, seconds, isExpired };
+    };
+  
+    const [countdown, setCountdown] = useState(calculateCountdown());
+  
+    useEffect(() => {
+      const timer = setInterval(() => {
+        const newCountdown = calculateCountdown();
+        setCountdown(newCountdown);
+        if (newCountdown.isExpired) {
+          // Call the onExpire callback if it exists
+          if (onExpire) onExpire();
+        }
+      }, 1000);
+  
+      return () => clearInterval(timer);
+    }, [onExpire]);
+  
+    // If the countdown is expired, show a different message
+    if (countdown.isExpired) {
+      return (
+        <Text>Ticket expired</Text>
+      );
+    }
+  
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center', maxWidth: '100%' }}>
+      <View style={{ backgroundColor: 'white', borderRadius: 10, padding: 5 ,shadowColor: '#000000', shadowOffset: {width: 0,height: 2,},shadowOpacity: 0.25,shadowRadius: 3.84, elevation: 5}}>
+        <Text style={{ color: 'black', fontSize: 14, textAlign: 'center' }}>
+          {countdown.days} D  {countdown.hours} H  {countdown.minutes} Min 
+        </Text>
+      </View>
+    </View>
+    );
+  };
 
 
   return (
     
-    <SafeAreaView  >
-    <ScrollZoomHeader
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollZoomHeader
         showsVerticalScrollIndicator={false}
-        smallHeaderHeight={
-          0
-        }
+        smallHeaderHeight={0}
         headerHeight={250}
         backgroundHeaderComponent={
           <Image
-            source={{url:event.image}}
+            source={{ uri: event.image }}
             style={{
-                padding:0,
-                margin:0,
+                padding: 0,
+                margin: 0,
                 width: '100%',
                 height: '100%',
-              
             }}
           />
         }
@@ -144,9 +235,8 @@ const EventsPage = () => {
         </TouchableOpacity>
       </View>
         <View style={styles.sectionContainer}>
-                  <Text style={styles.mainTitle}>{event.clubname}</Text>
+                  <Text style={styles.mainTitle}>{event.eventName}</Text>
             <View style={styles.underline}></View>
-            <Text style={styles.sectionTitle}>What's now ?</Text>
            <Text style={styles.sectionTitle}>Description</Text>
               <View style={{ flexDirection: 'column', justifyContent: 'flex-start'}}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -156,9 +246,7 @@ const EventsPage = () => {
                     size={icon_size}
                     color={darkGreen}
                   />
-                  <Text style={{ fontWeight: 'bold', color: darkGreen }}> Event Name </Text>{" "}
-
-                  {events.eventName}
+                  <Text style={{ fontWeight: 'bold', color: darkGreen, fontSize: fontSize }}> Event Name: <Text style={{ padding: 0, color: 'black'}}>{event.eventName}</Text></Text>
                   
                 </View>
 
@@ -171,77 +259,61 @@ const EventsPage = () => {
                   />
                   <Text style={{ padding: 0, fontSize: fontSize }}>
                     <Text style={{ fontSize: fontSize }}>
-                    <Text style={{ fontWeight: 'bold', color: darkGreen }}> Club:</Text>{" "}
-                    <Text style={{ padding: 0 }}>
-                      {event.club.name}
-                    </Text>
+                    <Text style={{ fontWeight: 'bold', color: darkGreen }}> Club: <Text style={{ padding: 0, color: 'black'}}>{event.club.name}</Text></Text>
                   </Text>
-                    
                   </Text>
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                   <MaterialCommunityIcons
                     style={{ position: 'relative' }}
-                    name="party-popper"
+                    name="calendar-range"
                     size={icon_size}
                     color={darkGreen}
                   />
                   <Text style={{ padding: 0, fontSize: fontSize }}>
-                    <Text style={{ fontWeight: 'bold', color: darkGreen }}>
-                      {" "}
-                      Date{" "}
-                    </Text>
-                    {events.dateAndHour}
+                  <Text style={{ fontWeight: 'bold', color: darkGreen }}> Date: <Text style={{ padding: 0, color: 'black'}}>{new Date(event.dateAndHour).getDate() + ' ' + new Date(event.dateAndHour).toLocaleString('default', { month: 'long' })}</Text></Text>
                   </Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                   <MaterialCommunityIcons
                     style={{ position: 'relative' }}
-                    name="party-popper"
+                    name="account-group"
                     size={icon_size}
                     color={darkGreen}
                   />
                   <Text style={{ padding: 0, fontSize: fontSize }}>
-                    <Text style={{ fontWeight: 'bold', color: darkGreen }}>
-                      {" "}
-                      Number of Particpants {" "}
-                    </Text>
-                    {events.numberOfParticipants}
+                  <Text style={{ fontWeight: 'bold', color: darkGreen }}> Number of Particpants: <Text style={{ padding: 0, color: 'black'}}>{event.numberOfParticipants}</Text></Text>
                   </Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                   <MaterialCommunityIcons
                     style={{ position: 'relative' }}
-                    name="party-popper"
+                    name="ticket-confirmation"
                     size={icon_size}
                     color={darkGreen}
                   />
                   <Text style={{ padding: 0, fontSize: fontSize }}>
-                    <Text style={{ fontWeight: 'bold', color: darkGreen }}>
-                      {" "}
-                      Number of Tickets Left {" "}
-                    </Text>
-                    {events.numberOfTicketsLeft}
+                  <Text style={{ fontWeight: 'bold', color: darkGreen }}> Number of Tickets Left: <Text style={{ padding: 0, color: 'black'}}>{event.numberOfTicketsLeft}</Text></Text>
                   </Text>
                 </View>
 
-
+                <View style={{marginTop: 30 }}>
+                <CountdownEvent eventDate={event.dateAndHour} />
+                </View>
+              <View style={{marginTop: 10 }}>
               <Text style={styles.sectionTitle}>Tickets</Text>
+              
+              {tickets && tickets.map((ticket) => renderTickets(ticket, event))}
+              </View>
+
               
             </View>
         </View>
       </View>
-    
-     
-      
-
-    </ScrollZoomHeader>
+      </ScrollZoomHeader>
     </SafeAreaView>
-    
-  
-  
-);
+  );
 };
 const styles = StyleSheet.create({
   container: {
@@ -376,13 +448,49 @@ eventTitle: {
   fontSize: 12,
   textAlign: 'center',
   },
-  eventname: {
+eventname: {
+  color: darkGreen,
+  fontWeight: 'bold',
+  fontSize: 16,
+  textTransform: 'uppercase',
+  textAlign: 'center',
+  },
+
+  ticketContainer:{
+    padding:10,
+    margin: 10,
+    borderRadius: 20,
+    backgroundColor: '#ffffff', // color of the box, change it to your preference
+    shadowColor: '#000000', // shadow color
+    shadowOffset: {
+      width: 0,
+      height: 2, // shadow will be on bottom of the box
+    },
+    shadowOpacity: 0.25, // shadow density
+    shadowRadius: 3.84, // blur radius of the shadow
+    elevation: 5, // for Android
+  },
+  ticketType:{
+    padding:10,
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    color: green,
+  },
+  ticketDescription:{
+    padding:10,
+    //fontWeight: 'bold',
+  },
+  ticketExpiration:{
     color: darkGreen,
     fontWeight: 'bold',
-    fontSize: 16,
-    textTransform: 'uppercase',
-    textAlign: 'center',
-    },
+    padding:10,
+  },
+  ticketLeft:{
+    color: darkGreen,
+    fontWeight: 'bold',
+    padding:10,
+
+  },
 });
 
 export default EventsPage;

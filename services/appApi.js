@@ -20,6 +20,14 @@ const appApi = createApi({
             }),
         }),
 
+        // Updating the info
+        signUpInfo: builder.mutation({
+            query: (payload) => ({
+                url: "/users/signupinfo",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
         //login
         loginUser: builder.mutation({
             query: ({ email, password }) => ({
@@ -31,26 +39,71 @@ const appApi = createApi({
                 },
             }),
         }),
-        
         logoutUser: builder.mutation({
-            query: (payload) => ({
-                url: "users/logout",
+            query: ({ email }) => ({
+                url: `/users/logout?email=${email}`,
                 method: "DELETE",
-                body: payload,
             }),
         }),
 
         verifyUser: builder.mutation({
             query: ({ email, verificationCode }) => ({
-              url: "/users/verify",
-              method: "POST",
-              body: {
-                email,
-                verificationCode,
-              },
+                url: "/users/verify",
+                method: "POST",
+                body: {
+                    email,
+                    verificationCode,
+                },
             }),
-          }),
-        
+        }),
+
+        //Add Friend
+        addFriend: builder.mutation({
+            query: (payload) => ({
+                url: "/users/addfriend",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
+        cancelInvitation: builder.mutation({
+            query: (payload) => ({
+                url: "/users/cancelinvitation",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
+
+        declineInvitation: builder.mutation({
+            query: (payload) => ({
+                url: "/users/declineinvitation",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
+        acceptInvitation: builder.mutation({
+            query: (payload) => ({
+                url: "/users/acceptinvitation",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
+
+        getRequesters: builder.mutation({
+            query: (payload) => ({
+                url: "/users/getrequesters",
+                method: "GET",
+                params: payload,
+            }),
+        }),
+
+        getRequesters: builder.mutation({
+            query: (payload) => ({
+                url: "/users/getrequesters",
+                method: "GET",
+                params: payload,
+            }),
+        }),
+
         clubsget: builder.mutation({
             query: (payload) => ({
                 url: "/users/Maps",
@@ -58,6 +111,7 @@ const appApi = createApi({
                 body: payload,
             }),
         }),
+
         getconvs: builder.mutation({
             query: (payload) => ({
                 url: "/chat/conversations",
@@ -65,9 +119,34 @@ const appApi = createApi({
                 params: payload,
             }),
         }),
+
+        getGroups: builder.mutation({
+            query: (payload) => ({
+                url: "/chat/groups",
+                method: "GET",
+                params: payload,
+            }),
+        }),
+
+        joinGroup: builder.mutation({
+            query: (payload) => ({
+                url: "/chat/groups/join",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
+
+        leaveGroup: builder.mutation({
+            query: (payload) => ({
+                url: "/chat/groups/leave",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
+
         eventsByClubGet: builder.query({
             query: (clubId) => `/events/events/${clubId}`,
-          }),
+        }),
 
         eventsget: builder.mutation({
             query: (payload) => ({
@@ -76,25 +155,54 @@ const appApi = createApi({
                 body: payload,
             }),
         }),
+
+        findSender: builder.mutation({
+            query: (payload) => ({
+                url: "/chat/findsenderinfo/",
+                method: "GET",
+                params: payload,
+            }),
+        }),
+
         ticketsByEventGet: builder.query({
             query: (eventId) => `/tickets/tickets/${eventId}`,
-          }),
+        }),
         ticketsByUserPost: builder.mutation({
             query: ({ eventId, userId, ticketId }) => ({
-              url: "/tickets/tickets/getticket",
-              method: "POST",
-              body: {
-                eventId,
-                userId,
-                ticketId,
-              },
+                url: "/tickets/tickets/getticket",
+                method: "POST",
+                body: {
+                    eventId,
+                    userId,
+                    ticketId,
+                },
             }),
-          }),
+        }),
+        userCurrentTicketsByuseridGet: builder.query({
+            query: (userId) => `/users/tickets/${userId}`,
+        }),
+        userInfoProfilePageGet: builder.query({
+            query: (userId) => `/users/user/${userId}`,
+        }),
+
+        updateUserImage: builder.mutation({
+            query: ({ id, image }) => ({
+                url: `/users/update-user-image/${id}`,
+                method: "PUT",
+                body: {
+                    image,
+                },
+            }),
+        }),
 
     }),
 });
 
-export const { useSignupUserMutation,useTicketsByUserPostMutation, useLoginUserMutation,useEventsgetMutation, useLogoutUserMutation, useVerifyUserMutation,useClubsgetMutation,useEventsByClubGetQuery,useTicketsByEventGetQuery, useGetconvsMutation } = appApi;
-export default appApi;
+export const { useSignupUserMutation, useLoginUserMutation, useEventsgetMutation, useLogoutUserMutation, useVerifyUserMutation,
+    useClubsgetMutation, useGetGroupsMutation, useGetconvsMutation, useJoinGroupMutation, useFindSenderMutation,
+    useLeaveGroupMutation, useEventsByClubGetQuery, useTicketsByEventGetQuery, useTicketsByUserPostMutation, useSignUpInfoMutation,
+    useAddFriendMutation, useGetRequestersMutation, useUserCurrentTicketsByuseridGetQuery, useCancelInvitationMutation, useAcceptInvitationMutation, 
+    useDeclineInvitationMutation, useUserInfoProfilePageGetQuery, useUpdateUserImageMutation } = appApi; // Add this line
 
+export default appApi;
 

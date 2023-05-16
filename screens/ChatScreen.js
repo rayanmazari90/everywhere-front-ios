@@ -1,87 +1,175 @@
 
 import bg from '../assets/leaves.jpg';
 import React, { useLayoutEffect, useState, useEffect } from 'react';
-import { StyleSheet, ImageBackground, FlatList, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
+import {
+    StyleSheet, ImageBackground, FlatList, KeyboardAvoidingView,
+    Platform, TextInput, Text, View, TouchableOpacity
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Message from '../components/Message';
 import socket from "../utils/socket";
 import { useSelector } from "react-redux";
+import { useNavigation } from '@react-navigation/native';
+import { useLeaveGroupMutation } from '../services/appApi';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import ImagePicker from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+
+// ...
+
+
 
 
 const ChatScreen = ({ route, navigation }) => {
-    const user = useSelector((state) => state.user)
-    const userId = user.user._id
+    const user = useSelector((state) => state.user);
+    const userId = user.user._id;
     const [chatMessages, setChatMessages] = useState([]);
     const [message, setMessage] = useState("");
-    const { id, name } = route.params;
-    //👇🏻 Runs when the component mounts
-    useLayoutEffect(() => {
-        navigation.setOptions({ title: name });
+    const { id, name, members, event_group_Id } = route.params;
+    const [prevSenderId, setPrevSenderId] = useState(null);
+    const [prevSenderIdreverse, setPrevSenderIdreverse] = useState(null);
+    const [leavegroup, { isLoading: leavegroupIsLoading, error: leavegroupError }] = useLeaveGroupMutation();
+    const getReceiverIds = (members, userId) => {
+        const receiverIds = members.filter(memberId => memberId !== userId);
 
-        //👇🏻 Sends the id to the server to fetch all its messages
+        if (receiverIds.length === 1) {
+            return receiverIds[0];
+        } else {
+            return null;
+        }
+    };
+
+    const leaveagroup = async () => {
+        try {
+            await leavegroup({ userId: userId, event_group_Id: event_group_Id });
+            navigation.goBack();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
+    const receiverID = getReceiverIds(members, userId);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: name,
+            headerRight: () => (
+                <TouchableOpacity style={styles.exitButton} onPress={leaveagroup}>
+                    <Ionicons name="exit" size={24} color="green" />
+                </TouchableOpacity>
+            )
+        });
         socket.emit("findconv", id);
+        socket.on("foundconv", (convmessages) => {
+            const updatedMessages = [...convmessages].reverse();
+            setChatMessages(updatedMessages);
+        });
     }, []);
 
-    useLayoutEffect(() => {
-        navigation.setOptions({ title: name });
-        socket.emit("findconv", id);
-        socket.on("foundconv", (convmessages) => setChatMessages(convmessages));
-    }, []);
-
-    //👇🏻 This runs when the messages are updated.
     useEffect(() => {
-        socket.on("foundconv", (convmessages) => setChatMessages(convmessages));
+        socket.on("foundconv", (convmessages) => {
+            const updatedMessages = [...convmessages].reverse();
+            setChatMessages(updatedMessages);
+        });
     }, [socket]);
 
-
     const handleNewMessage = () => {
-        const hour =
-            new Date().getHours() < 10
-                ? `0${new Date().getHours()}`
-                : `${new Date().getHours()}`;
-
-        const mins =
-            new Date().getMinutes() < 10
-                ? `0${new Date().getMinutes()}`
-                : `${new Date().getMinutes()}`;
-
         socket.emit("newMessage", {
             conversationId: id,
             message,
             sender: userId,
-            receiver: "642f445e61e7077b8ce3eb9c",
-            isRead: false
+            receiver: receiverID,
+            isRead: false,
+            createdAt: new Date(),
+            updatedAt: new Date()
         });
         setMessage("");
     };
 
+    const handlePickImage = () => {
+        var options = {
+            title: 'Select Image',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+
+        launchImageLibrary(options, (response) => {
+            if (response.uri) {
+                console.log("check");
+            }
+        });
+    };
+
+
+    const handleTakePhoto = () => {
+        var options = {
+            title: 'Take Photo',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+
+        launchCamera(options, response => {
+            if (response.uri) {
+                console.log(response.uri);
+                // send the picture, handle the response.uri
+                // note that the response also contains other information you might need
+                // such as the original file name, or the image width and height
+            } else if (response.didCancel) {
+                console.log('User cancelled photo picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            }
+        });
+    };
+
     return (
         <ImageBackground source={bg} style={styles.bg}>
-            {chatMessages[0] ? (<FlatList data={chatMessages}
-                renderItem={({ item }) => <Message message={item} />}
-                style={styles.list} />
-            ) : (
-                ""
-            )}
-            <KeyboardAvoidingView behavior={'padding'} enabled={Platform.OS === 'ios'}
-                keyboardVerticalOffset={Platform.select({ android: 64, ios: 0 })}>
-                <SafeAreaView edges={["bottom"]} style={styles.container}>
-                    <FontAwesome
-                        name="plus"
-                        size={20}
-                        color="royalblue"
-                    />
+            {chatMessages[0] ? (
+                <FlatList
+                    data={chatMessages}
+                    renderItem={({ item, index }) =>
+                        <Message message={item}
+                            prevSenderId={chatMessages[index - 1]?.sender}
+                            setPrevSenderId={setPrevSenderId}
+                            prevSenderIdreverse={chatMessages[index + 1]?.sender}
+                            setPrevSenderIdreverse={setPrevSenderIdreverse} />}
 
-                    {/* Text Input */}
-                    <TextInput value={message} onChangeText={setMessage}
+                    style={styles.list}
+                    inverted
+                    contentContainerStyle={{ paddingBottom: 15 }}
+                />
+            ) : (
+                <View style={styles.noMessagesContainer}>
+                    <Text style={styles.noMessagesText}>No messages yet.</Text>
+                </View>
+            )}
+
+            <KeyboardAvoidingView
+                behavior={'padding'}
+                enabled={Platform.OS === 'ios'}
+                keyboardVerticalOffset={Platform.select({ android: 64, ios: 0 })}
+            >
+                <SafeAreaView edges={["bottom"]} style={styles.inputContainer}>
+                    <FontAwesome name="plus" size={20} color="royalblue" onPress={handlePickImage} />
+                    <FontAwesome name="camera" size={20} color="royalblue" onPress={handleTakePhoto} />
+                    <TextInput
+                        value={message}
+                        onChangeText={setMessage}
                         style={styles.input}
                         placeholder="Type your message..."
                     />
 
-                    {/* Icon */}
-                    <MaterialCommunityIcons onPress={handleNewMessage}
+                    <MaterialCommunityIcons
+                        onPress={handleNewMessage}
                         style={styles.send}
                         name="send"
                         size={20}
@@ -89,38 +177,49 @@ const ChatScreen = ({ route, navigation }) => {
                     />
                 </SafeAreaView>
             </KeyboardAvoidingView>
-
         </ImageBackground>
     );
 };
-
 const styles = StyleSheet.create({
-    bg: { flex: 1 },
-    list: { padding: 10, },
-    container: {
-        flexDirection: "row",
-        backgroundColor: "whitesmoke",
+    bg: {
+        flex: 1,
+    },
+    list: {
+        flex: 1,
+        padding: 10,
+    },
+    noMessagesContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noMessagesText: {
+        fontSize: 18,
+        color: 'gray',
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         padding: 5,
         paddingHorizontal: 10,
-        alignItems: "center",
+        backgroundColor: 'whitesmoke',
     },
     input: {
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: 'white',
         padding: 5,
         paddingHorizontal: 10,
         marginHorizontal: 10,
-
         borderRadius: 50,
-        borderColor: "lightgray",
+        borderColor: 'lightgray',
         borderWidth: StyleSheet.hairlineWidth,
     },
     send: {
-        backgroundColor: "royalblue",
+        backgroundColor: 'royalblue',
         padding: 7,
         borderRadius: 15,
-        overflow: "hidden",
-    }
-})
+        overflow: 'hidden',
+    },
+});
 
 export default ChatScreen;

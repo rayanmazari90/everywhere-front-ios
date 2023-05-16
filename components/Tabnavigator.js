@@ -9,6 +9,7 @@ import Profile from "../screens/profile";
 import Events from '../screens/Events';
 import ChatsScreen from "../screens/ChatsScreen";
 import TicketScreen from "../screens/TicketsPage";
+import MyTicket from '../screens/MyTickets';
 //import Profile from "../screens/Profile";
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton= ({children, onPress}) =>(
@@ -151,12 +152,12 @@ const TabNavigator = () => {
             
         ),
       }}/>
-      <Tab.Screen name="Settings" component={TicketScreen} options={{
+      <Tab.Screen name="MyTicket" component={MyTicket} options={{
        
         tabBarIcon: ({focused}) => (
             <View style= {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                 <Image 
-                source={require('../assets/icons/settings.png')}
+                source={require('../assets/icons/tickets.png')}
                 resizeMode= "contain"
                 style={{
                     width: 30,
@@ -168,7 +169,7 @@ const TabNavigator = () => {
                 style={{ color: focused ? '#4d84e2' : '#748c94' , fontSize: 16}}
                 > 
                     
-                    Settings
+                    Tickets
                 </Text>
             </View>
             

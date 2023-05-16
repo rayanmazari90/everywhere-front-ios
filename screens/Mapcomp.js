@@ -11,7 +11,7 @@ import appApi, { useClubsgetMutation } from './../services/appApi';
 
 //
 MapboxGL.setWellKnownTileServer('mapbox');
-MapboxGL.setAccessToken('pk.eyJ1IjoicmF5bWF6bWF6IiwiYSI6ImNsOW9ybnVocTBsbmMzcHM1d3gwNmw1NWIifQ.pmYh9FP10oM88ezvx1KsYg');
+MapboxGL.setAccessToken('sk.eyJ1IjoicmF5bWF6bWF6IiwiYSI6ImNsaHFucmY3czBpbnAza252N3V6aG5pdXMifQ.og_YU_6Ow-klAdJE2xNELw');
 const mapStyle = 'mapbox://styles/mapbox/dark-v11';
 
 //MarkerComponent
@@ -45,7 +45,10 @@ const Mapcomp = () => {
         coordinate={[club.lng, club.lat]}
       >
         <TouchableOpacity
-        onPress={() => navigation.navigate('ClubsPage', { club: club })}
+        onPress={() => {
+          console.log('pressed BITCH');
+          navigation.navigate('ClubsPage', { club: club });
+        }}
       >
         <ImageBackground
           source={{ uri: 'https://drive.google.com/uc?export=view&id='+club.image }}

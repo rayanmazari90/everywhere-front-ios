@@ -16,6 +16,7 @@ import data from './components/keystorage.json';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import SignUp from './screens/SignUp';
+import SignUpInfo from './screens/SignUpInfo';
 import ChatScreen from './screens/ChatScreen';
 import ChatsScreen from './screens/ChatScreen';
 import VerifyEmailScreen from './screens/VerifyEmailScreen';
@@ -23,6 +24,8 @@ import ClubsPage from './screens/Clubspage';
 import EventsPage from './screens/EventsPage';
 import TicketsPage from './screens/TicketsPage';
 import Addfriends from './screens/Addfriends';
+import Joingroup from './screens/Joingroup';
+
 
 
 
@@ -39,6 +42,7 @@ function AuthStack() {
             <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
             <Stack.Screen name="VerifyEmailScreen" component={VerifyEmailScreen} options={{ headerShown: false }}/>
             <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
+            <Stack.Screen name="SignUpInfo" component={SignUpInfo} />
             
         </Stack.Navigator>
     );
@@ -100,10 +104,12 @@ const App = () => {
                   <>
                       <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
                       <Stack.Screen name="Chat" component={ChatScreen} />
+                      <Stack.Screen name="Joingroup" component={Joingroup} options={{ headerShown: false }} />
                       <Stack.Screen name="Addfriends" component={Addfriends} />
                       <Stack.Screen name="ClubsPage" component={ClubsPage} options={{ headerShown: false }}/>
                       <Stack.Screen name="EventsPage" component={EventsPage} options={{ headerShown: false }}/>
                       <Stack.Screen name="TicketsPage" component={TicketsPage} options={{ headerShown: true }}/>
+                      
                       
                       
                   </>

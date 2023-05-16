@@ -94,6 +94,8 @@ const EventsPage = () => {
     return unsubscribe;
   }, [navigation, refetch]);
 
+  
+
 
   useEffect(() => {
     if (TicketsData) {

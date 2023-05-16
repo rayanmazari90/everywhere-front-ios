@@ -69,5 +69,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<string>UIviewjsp</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like access to your photo library</string>
+	<key>NSCameraUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to use your camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to use your microphone (for video recording)</string>
 </dict>
 </plist>

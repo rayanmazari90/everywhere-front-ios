@@ -56,6 +56,13 @@ const appApi = createApi({
                 },
             }),
         }),
+        removeFriend: builder.mutation({
+            query: (payload) => ({
+                url: "/users/removefriend",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
 
         //Add Friend
         addFriend: builder.mutation({
@@ -194,6 +201,20 @@ const appApi = createApi({
                 },
             }),
         }),
+        updateUserLocation: builder.mutation({
+            query: (payload) => ({
+                url: "/users/update-location",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
+        locationsGet: builder.mutation({
+            query: (payload) => ({
+                url: "/users/userlocations",
+                method: "GET",
+                body: payload,
+            }),
+        }),
 
     }),
 });
@@ -202,7 +223,7 @@ export const { useSignupUserMutation, useLoginUserMutation, useEventsgetMutation
     useClubsgetMutation, useGetGroupsMutation, useGetconvsMutation, useJoinGroupMutation, useFindSenderMutation,
     useLeaveGroupMutation, useEventsByClubGetQuery, useTicketsByEventGetQuery, useTicketsByUserPostMutation, useSignUpInfoMutation,
     useAddFriendMutation, useGetRequestersMutation, useUserCurrentTicketsByuseridGetQuery, useCancelInvitationMutation, useAcceptInvitationMutation, 
-    useDeclineInvitationMutation, useUserInfoProfilePageGetQuery, useUpdateUserImageMutation } = appApi; // Add this line
+    useDeclineInvitationMutation, useUserInfoProfilePageGetQuery,useRemoveFriendMutation,useUpdateUserImageMutation,useUpdateUserLocationMutation, useLocationsGetMutation } = appApi; // Add this line
 
 export default appApi;
 

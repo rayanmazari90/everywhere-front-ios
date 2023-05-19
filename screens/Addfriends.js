@@ -111,61 +111,61 @@ import { useGetRequestersMutation } from '../services/appApi';
 import { useSelector } from 'react-redux';
 import {url_back}  from "../components/connection_url";
 
+
 const AddFriends = () => {
     const [userName, setUserName] = useState('');
     const [allUsers, setAllUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
+    const user = useSelector((state) => state.user);
+    const userId = user.user._id
     const [getRequesters, { isLoading: getRequestersIsLoading, error: getRequestersError }] = useGetRequestersMutation();
     const [requesters, setRequesters] = useState([]);
-    const user = useSelector((state) => state.user);
 
-    console.log(user.user.friendRequests);
+    const fetchData = async () => {
+        try {
+            const result = await getRequesters({ userId: user.user._id });
+            const users = result.data.users;
+            setRequesters(users);
+        } catch (error) {
+            console.error('Error fetching requesters:', error);
+        }
+    };
+
+
+    const fetchGroups = async () => {
+        try {
+            const res = await fetch(`${url_back}/users/getusersandnotfriends?userId=${userId}`);
+            const data = await res.json();
+            setAllUsers(data);
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    };
+
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                if (user.user.friendRequests.length === 0) {
-                    setRequesters([]);
-                } else if (user.user.friendRequests.length === 1) {
-                    const result = await getRequesters({ friendRequests: user.user.friendRequests });
-                    const users = result.data.users;
-                    const filteredRequesters = users.filter(requester => requester._id !== user.user._id);
-                    setRequesters(filteredRequesters);
-                } else {
-                    const result = await getRequesters({ friendRequests: user.user.friendRequests });
-                    const users = result.data.users;
-                    const filteredRequesters = users.filter(requester => requester._id !== user.user._id);
-                    setRequesters(filteredRequesters);
-                }
-            } catch (error) {
-                console.error('Error fetching requesters:', error);
-            }
-        };
-
         fetchData();
     }, []);
 
-
-
     useEffect(() => {
-        function fetchGroups() {
-            fetch(`${url_back}/users`)
-                .then((res) => res.json())
-                .then((data) => setAllUsers(data))
-                .catch((err) => console.error(err));
-        }
         fetchGroups();
-    }, [allUsers]);
+    }, [userName]);
 
     useEffect(() => {
         setFilteredUsers(
             allUsers.filter(
                 (allUser) =>
-                    allUser.name.toLowerCase().includes(userName.toLowerCase()) &&
-                    !requesters.some((requester) => requester._id === allUser._id)
+                    allUser.name.toLowerCase().includes(userName.toLowerCase()) && allUser._id !== user.user._id
             )
         );
-    }, [userName, allUsers, requesters]);
+    }, [userName, allUsers]);
+
+    const onFriendAction = () => {
+        fetchGroups();
+        fetchData();
+    };
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -173,7 +173,7 @@ const AddFriends = () => {
             <View style={styles.container}>
                 <FlatList
                     data={requesters}
-                    renderItem={({ item }) => <FriendRequestItem requester={item} />}
+                    renderItem={({ item }) => <FriendRequestItem requester={item} onFriendAction={onFriendAction} />}
                 />
             </View>
             <Text> Winek Users </Text>
@@ -189,7 +189,7 @@ const AddFriends = () => {
             {filteredUsers[0] ? (
                 <FlatList
                     data={filteredUsers}
-                    renderItem={({ item }) => <AddfriendItem friend={item} />}
+                    renderItem={({ item }) => <AddfriendItem friend={item} onFriendAction={onFriendAction} />}
                     style={styles.listusers}
                 />
             ) : null}

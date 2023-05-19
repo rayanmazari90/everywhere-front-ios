@@ -1,9 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, View,  ImageBackground, TouchableOpacity} from 'react-native';
+import {StyleSheet, View,  ImageBackground, TouchableOpacity, Text, Pressable, Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MapboxGL ,{ ShapeSource, SymbolLayer , Marker, MarkerView, Camera} from '@rnmapbox/maps';
 import ClubsPage from './Clubspage';
-import appApi, { useClubsgetMutation } from './../services/appApi';
+import appApi, { useClubsgetMutation, useLocationsGetMutation } from './../services/appApi';
 
 //import { UseClubsget } from './../services/appApi';
 
@@ -21,37 +22,90 @@ const Mapcomp = () => {
   const centerCoordinate = [-3.703790, 40.416775]; // Madrid coordinates
   const [clubsget, { isLoading, error }] = useClubsgetMutation();
   const [dataArr, setDataArr] = useState([]);
+  const [locations, setlocations] = useState([]);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const navigation = useNavigation();
+  const [heatmapData, setHeatmapData] = useState(null);
+  const [mapKey, setMapKey] = useState(Math.random());
+  const [locationsget] = useLocationsGetMutation();
+  const colors = [
+    'rgba(0, 0, 255, 0)',
+    'royalblue',
+    'cyan',
+    'lime',
+    'yellow',
+    'red',
+    'green',
+    'purple',
+    'orange'
+  ];
+  
+
+  const generateDummyData = () => {
+    const data = [];
+    const numPoints = 100; // Number of random points to generate
+
+    for (let i = 0; i < numPoints; i++) {
+      const lat = Math.random() * 0.1 + 40.35; // Random latitude within a certain range in Madrid
+      const lng = Math.random() * 0.1 - 3.75; // Random longitude within a certain range in Madrid
+
+      data.push({
+        lat,
+        lng,
+        weight: Math.random(), // Random weight for each point
+      });
+    }
+
+    return data;
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await clubsget();
-        setDataArr(response.data);
+        const response_club = await clubsget();
+        setDataArr(response_club.data);
+        const response_loc = await locationsget();
+        setlocations(response_loc.data);
+        setHeatmapData(response_loc.data);
+        console.log("WAZZAAAAA", locations);
       } catch (err) {
         console.error(err);
-        setMessage('Try again');
       }
     };
     fetchData();
-  }, [clubsget]);
+  }, []);
+
+
+
+  const handleMarkerPress= () => {
+    navigation.navigate('ClubsPage', { club: club });
+
+  };
+
+
 
   const renderMarkers = () => {
-    return dataArr.map((club) => (
-      <MapboxGL.MarkerView
+    return dataArr.map((club) => {
+        //const image ='https://drive.google.com/uc?export=view&id=' + club.image;
+        const image = `data:image/gif;base64,${club.image}`;
+        return (
+            
+          <MapboxGL.MarkerView
         key={club.clubname}
         id={club.clubname}
         title={club.clubname}
         coordinate={[club.lng, club.lat]}
+        allowOverlap={true}
       >
         <TouchableOpacity
-        onPress={() => {
+        onPressIn={() => {
           console.log('pressed BITCH');
           navigation.navigate('ClubsPage', { club: club });
         }}
       >
         <ImageBackground
-          source={{ uri: 'https://drive.google.com/uc?export=view&id='+club.image }}
+          source={{ uri: image }}
           style={{
             width: 40,
             height: 40,
@@ -83,8 +137,9 @@ const Mapcomp = () => {
         </ImageBackground>
         </TouchableOpacity>
       </MapboxGL.MarkerView>
-    ));
-  };
+        );
+    });
+};
 
   const data = async() => {
     const data = await handleEvents();
@@ -98,27 +153,61 @@ const Mapcomp = () => {
 
 
   return (
-    
     <View style={styles.page}>
-    
       <View style={styles.container}>
-      
-        <MapboxGL.MapView 
-        style={styles.map}
-        styleURL={mapStyle}
-        projection= "globe"
-        //center={[-3.703790, 40.416775]} // Set the initial map center
-        //zoomLevel={40}
-        
-       >  
-          <MapboxGL.UserLocation visible={true}/>
+      {heatmapData && (<MapboxGL.MapView
+            style={styles.map}
+            styleURL={mapStyle}
+            projection= "globe"
+            scaleBarEnabled= {false}
+            onDidFinishLoadingMap={() => setMapLoaded(true)}  // Set mapLoaded to true when map is fully loaded
+          >  
           
+
+            <MapboxGL.UserLocation visible={true}/>
             <MapboxGL.Camera 
               zoomLevel={12}
               centerCoordinate={centerCoordinate}
+              animationMode={'flyTo'}
+              animationDuration={0}
+              
             />
-              {renderMarkers()}
-        </MapboxGL.MapView>
+            {renderMarkers()}
+            <MapboxGL.ShapeSource
+                  id="heatmapDataSource"
+                  shape={{
+                    type: 'FeatureCollection',
+                    features: heatmapData.map((point, index) => ({
+                      type: 'Feature',
+                      geometry: {
+                        type: 'Point',
+                        coordinates: [point.long, point.lat],
+                      },
+                      properties: {
+                        id: index.toString(), // Unique ID for each feature
+                        weight: point.weight, // Weight of the point
+                      },
+                    })),
+                  }}
+                >
+                  <MapboxGL.HeatmapLayer
+                        id="heatmapLayerId"
+                        sourceID="heatmapDataSource"
+                        sourceLayerID=""
+                        //heatmapWeight={(feature) => feature.properties.weight*0.0001} // Use the weight property from each feature in the heatmapData
+                        style={{
+                          visibility: 'visible',  // The heatmap layer is shown
+                          heatmapRadius: 50,  // Radius of influence in pixels
+                          heatmapWeight: 1,  // Measure of how much an individual point contributes to the heatmap
+                          heatmapIntensity: 0.4,  // Controls the intensity of the heatmap globally
+                          heatmapColor: ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0, 0, 255, 0)', 0.1, 'royalblue', 0.3, 'cyan', 0.5, 'lime', 0.7, 'yellow', 1, 'red'], // Defines the color of each pixel based on its density value
+                          heatmapOpacity: 0.6,  // The global opacity at which the heatmap layer will be drawn
+                        }}
+                      />
+                    </MapboxGL.ShapeSource>
+
+          </MapboxGL.MapView>
+        )}
       </View>
     </View>
   );
@@ -140,8 +229,12 @@ const styles = StyleSheet.create({
   map: {
     flex: 1
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
 
 });
-
 

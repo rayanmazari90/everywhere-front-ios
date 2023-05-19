@@ -1,52 +1,60 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { Text, View, Image, StyleSheet, Pressable, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useAddFriendMutation, useCancelInvitationMutation } from '../../services/appApi';
+import { useAddFriendMutation, useCancelInvitationMutation, useRemoveFriendMutation } from '../../services/appApi';
 import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the Icon component
 
-const AddfriendItem = ({ friend }) => {
+const AddfriendItem = ({ friend, onFriendAction }) => {
     const navigation = useNavigation();
     const user = useSelector((state) => state.user);
     const userId = user.user._id;
     const [addFriend, { isLoading: addFriendisloading, error: addFrienderror }] = useAddFriendMutation();
     const [cancelInvitation, { isLoading: cancelInvitationisloading, error: cancelInvitationerror }] = useCancelInvitationMutation();
+    const [removeFriend, { isLoading: removeFriendisloading, error: removeFrienderror }] = useRemoveFriendMutation();
+
 
     const handleAddFriend = async () => {
         try {
             await addFriend({ userId: userId, receiverId: friend._id });
+            onFriendAction();  // Notify parent component
         } catch (error) {
             console.error(error);
         }
     };
 
+    /*const handleRemoveFriend = async () => {
+        try {
+            await removeFriend({ userId: userId, receiverId: friend._id });
+            onFriendAction();  // Notify parent component
+        } catch (error) {
+            console.error(error);
+        }
+    };*/
 
     const handleCancelInvitation = async () => {
         try {
             await cancelInvitation({ userId: userId, receiverId: friend._id });
+            onFriendAction();  // Notify parent component
         } catch (error) {
             console.error(error);
         }
-    };
-
-
-    const isMyFriend = () => {
-        return user.user.friends.includes(friend._id);
     };
 
     const RequestSent = () => {
         return friend.friendRequests.includes(userId);
     };
+    const image = `data:image/gif;base64,${friend.image}`;
 
     return (
         <View style={styles.container}>
-            <Image source={{ uri: friend.image }} style={styles.image} />
+            {<Image source={{ uri: image }} style={styles.image} />}
             <View style={styles.content}>
                 <View style={styles.row}>
                     <Text numberOfLines={1} style={styles.name}>
                         {friend.name}
                     </Text>
-                    {!isMyFriend() && !RequestSent() && (
+                    {!RequestSent() && (
                         <Button title="Add Friend" onPress={handleAddFriend} />
                     )}
                     {
@@ -85,12 +93,12 @@ const styles = StyleSheet.create({
         flex: 1,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: 'lightgray',
-        justifyContent: 'center', // Align items vertically in the center
+        justifyContent: 'center',
     },
     row: {
         flexDirection: 'row',
-        justifyContent: 'space-between', // Distribute items horizontally
-        alignItems: 'center', // Align items vertically in the center
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     name: {
         flex: 1,

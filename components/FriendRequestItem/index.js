@@ -2,27 +2,30 @@ import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { Text, View, Image, StyleSheet, Pressable, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAcceptInvitationMutation, useDeclineInvitationMutation } from '../../services/appApi';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const FriendRequestItem = ({ requester }) => {
+const FriendRequestItem = ({ requester, onFriendAction }) => {
     const navigation = useNavigation();
     const user = useSelector((state) => state.user);
     const userId = user.user._id;
     const [acceptInvitation, { isLoading: acceptinvitationisloading, error: acceptinvitationerror }] = useAcceptInvitationMutation();
     const [declineInvitation, { isLoading: declineinvitationisloading, error: declineinvitationerror }] = useDeclineInvitationMutation();
-
+    console.log("rendering");
     const handleAcceptFriendRequest = async () => {
         try {
-            await acceptInvitation({ userId: userId, receiverId: requester._id });
+            const response = await acceptInvitation({ userId: userId, receiverId: requester._id });
+            onFriendAction();
         } catch (error) {
             console.error(error);
         }
     };
 
+
     const handleDeclineFriendRequest = async () => {
         try {
             await declineInvitation({ userId: userId, receiverId: requester._id });
+            onFriendAction();
         } catch (error) {
             console.error(error);
         }
@@ -30,7 +33,7 @@ const FriendRequestItem = ({ requester }) => {
 
     return (
         <View style={styles.container}>
-            <Image source={{ uri: requester.image }} style={styles.image} />
+            {/*<Image source={{ uri: requester.image }} style={styles.image} />*/}
             <View style={styles.content}>
                 <View style={styles.row}>
                     <Text numberOfLines={1} style={styles.name}>
@@ -83,8 +86,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginLeft: 0,
-    },
-    iconSpace: {
+    }, iconSpace: {
         width: 10,
     }
 });

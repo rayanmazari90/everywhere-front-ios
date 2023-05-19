@@ -17,7 +17,7 @@ import RNFS from 'react-native-fs';
 
 const Profile = () => {
     const navigation = useNavigation();
-    const { user = {} } = useSelector(state => state.user);
+    const {user={}} = useSelector(state => state.user);
     const [logoutUser, { logoutisLoading, logouterror }] = useLogoutUserMutation();
     const email = user?.user?.email || null;
     const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +32,7 @@ const Profile = () => {
 
     useEffect(() => {
         if(user){
+            console.log(user._id);
             setIsLoading(!user);
             loadUserInfo(user._id);
         }

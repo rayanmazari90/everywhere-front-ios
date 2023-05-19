@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
@@ -19,11 +19,11 @@ const SignUpInfo = () => {
     const [signupinfo, { isLoading: signupinfoisloading, error: signupinfoerror }] = useSignUpInfoMutation();
     const user = useSelector((state) => state.user);
 
-
     const signupinfos = async () => {
-        console.log('user', user);
+        console.log('user', user_);
         const userId = user && user.user ? user.user._id : null;
         if (!userId || !selectedBachelor || !gender || !selectedYear) {
+            console.log('user', user, 'gender ', gender, 'selectedBachelor ', selectedBachelor,'selectedYear ', selectedYear );
             console.error("Required data is missing");
             return;
         }

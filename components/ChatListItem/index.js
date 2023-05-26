@@ -25,9 +25,19 @@ const ChatListItem = ({ chat }) => {
         }
         fetchLastMessage();
     }, [chat.lastMessage, chat._id]);
+
+    const isUrl = chat.user.image && chat.user.image.startsWith('http');
+
     return (
         <Pressable onPress={() => navigation.navigate("Chat", { id: chat._id, name: chat.user.name, members: chat.members, event_group_Id: chat.user.id })} style={styles.container}>
-            <Image source={{ uri: chat.user.image }} style={styles.image} />
+            {
+                isUrl ?
+                    <Image source={{ uri: chat.user.image }} style={styles.image} />
+                    :
+                    <Image source={{ uri: `data:image/png;base64,${chat.user.image}` }} style={styles.image} />
+
+            }
+
             <View style={styles.content}>
                 <View style={styles.row}>
                     <Text numberOfLines={1} style={styles.name}>

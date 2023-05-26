@@ -25,6 +25,7 @@ import EventsPage from './screens/EventsPage';
 import TicketsPage from './screens/TicketsPage';
 import Addfriends from './screens/Addfriends';
 import Joingroup from './screens/Joingroup';
+import Removefriends from './screens/Removefriends';
 import useBackgroundLocationUpdate from './components/useBackgroundLocationUpdate';
 
 
@@ -111,6 +112,8 @@ const App = () => {
                       <Stack.Screen name="ClubsPage" component={ClubsPage} options={{ headerShown: false }}/>
                       <Stack.Screen name="EventsPage" component={EventsPage} options={{ headerShown: false }}/>
                       <Stack.Screen name="TicketsPage" component={TicketsPage} options={{ headerShown: true }}/>
+                      <Stack.Screen name="Removefriends" component={Removefriends} options={{ headerShown: true }}/>
+                      
                       
                       
                       

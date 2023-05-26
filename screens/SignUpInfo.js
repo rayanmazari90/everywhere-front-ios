@@ -1,44 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Background from '../components/Background';
 import { darkGreen } from '../components/Constant_color';
 import Btn from '../components/Btn';
 import { useSelector } from 'react-redux';
 import { useSignUpInfoMutation } from '../services/appApi';
-
-
 const SignUpInfo = () => {
 
-    
     const [gender, setGender] = useState('');
     const [selectedBachelor, setSelectedBachelor] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
     const navigation = useNavigation();
+    const route = useRoute();
+    const email = route.params.email
     const [signupinfo, { isLoading: signupinfoisloading, error: signupinfoerror }] = useSignUpInfoMutation();
-    const user = useSelector((state) => state.user);
 
     const signupinfos = async () => {
-        console.log('user', user_);
-        const userId = user && user.user ? user.user._id : null;
-        if (!userId || !selectedBachelor || !gender || !selectedYear) {
-            console.log('user', user, 'gender ', gender, 'selectedBachelor ', selectedBachelor,'selectedYear ', selectedYear );
-            console.error("Required data is missing");
-            return;
-        }
         const numselectedYear = parseInt(selectedYear);
-        console.log("year_selected" , numselectedYear);
-        console.log("gender_selected" ,gender);
-        console.log("bachelor_selected" ,selectedBachelor)
+        console.log(numselectedYear);
+        console.log(gender);
+        console.log(selectedBachelor)
         try {
-            await signupinfo({ userId: userId, selectedBachelor: selectedBachelor, gender: gender, selectedYear: selectedYear });
-            navigation.navigate("Home");
+            console.log(route.params.email,)
+            await signupinfo({ email: email, selectedBachelor: selectedBachelor, gender: gender, selectedYear: selectedYear });
+            console.log(email);
+            navigation.navigate("VerifyEmailScreen", { email });
         } catch (error) {
             console.error(error);
         }
     };
-
 
     return (
         <Background>
@@ -103,7 +95,7 @@ const SignUpInfo = () => {
                         textColor="white"
                         bgColor="grey"
                         btnLabel="Skip"
-                        Press={() => navigation.navigate('Home')}
+                        Press={() => navigation.navigate("VerifyEmailScreen", { email })}
                     />
                 </View>
             </View>

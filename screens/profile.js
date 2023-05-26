@@ -1,15 +1,15 @@
-import React , {useEffect, useState}from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import { darkGreen } from '../components/Constant_color';
 
-import { StyleSheet, Text, View, SafeAreaView, Image,Dimensions, ScrollView, TouchableOpacity,ImageBackground,Button } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, ScrollView, TouchableOpacity, ImageBackground, Button, Pressable } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useLogoutUserMutation } from "../services/appApi";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUserInfoProfilePageGetQuery } from "../services/appApi";
-import {ImagePicker, showImagePicker, launchImageLibrary} from 'react-native-image-picker'
+import { ImagePicker, showImagePicker, launchImageLibrary } from 'react-native-image-picker'
 import { useUpdateUserImageMutation } from "../services/appApi";
 import RNFS from 'react-native-fs';
 //import Permissions from 'react-native-permissions';
@@ -17,33 +17,32 @@ import RNFS from 'react-native-fs';
 
 const Profile = () => {
     const navigation = useNavigation();
-    const {user={}} = useSelector(state => state.user);
+    const { user = {} } = useSelector(state => state.user);
     const [logoutUser, { logoutisLoading, logouterror }] = useLogoutUserMutation();
     const email = user?.user?.email || null;
     const [isLoading, setIsLoading] = useState(true);
     const [userInfo, setUserInfo] = useState(null);
     const [resourcePath, setResourcePath] = useState(null);
     const [updateUserImage, { isLoading: isUploading, error: uploadError }] = useUpdateUserImageMutation();
-    
+
 
     const { data: UserData, isLoading: isLoadings, isError, refetch } = useUserInfoProfilePageGetQuery(user._id || null, {
         enabled: !!user._id,
     });
 
     useEffect(() => {
-        if(user){
-            console.log(user._id);
+        if (user) {
             setIsLoading(!user);
             loadUserInfo(user._id);
         }
-        
+
     }, [user]);
 
     useEffect(() => {
         if (user._id) {
             loadUserInfo(user._id);
         }
-    }, [user]);
+    }, []);
 
     const loadUserInfo = async (userId) => {
         try {
@@ -59,14 +58,8 @@ const Profile = () => {
         if (user && user.email) {
             const email = user.email;
             try {
-                await logoutUser({ email: email }).unwrap().then((data) => {
-                    if (data) {
-                        AsyncStorage.removeItem('AccessToken');
-                    }
-                    else {
-                        console.log("something went wrong");
-                    }
-                });
+                AsyncStorage.removeItem('AccessToken');
+                await logoutUser({ email: email });
             } catch (error) {
                 console.error(error);
             }
@@ -78,21 +71,21 @@ const Profile = () => {
         const options = {
             noData: false,
         };
-    
+
         launchImageLibrary(options, async (response) => {
             if (response.error) {
             } else if (response.assets && response.assets[0].uri) {
                 // The user selected an image. You can set it to state and display it or send it to the server.
-                
+
                 // Convert image to base64
                 let filePath = response.assets[0].uri;
                 if (Platform.OS === 'ios') {
                     filePath = filePath.replace('file://', '');
                 }
-                
+
                 try {
                     const image = await RNFS.readFile(filePath, 'base64');
-                
+
                     // Call the mutation
                     const updateResponse = await updateUserImage({ id: user._id, image });
                     if (updateResponse.error.data === "User image updated successfully") {
@@ -101,7 +94,7 @@ const Profile = () => {
                     } else {
                         console.error("Error updating image", updateResponse.error);
                     }
-                    
+
                     // If the upload was successful, reload the user info
                     loadUserInfo(user._id);
                 } catch (error) {
@@ -113,106 +106,104 @@ const Profile = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.scrollContainer}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
-                <View style={styles.titleBar}>
-                    <TouchableOpacity onPress={handleLogout} style={{ marginRight: 16 }}>
-                        <Ionicons name="ios-log-out" size={34} color={darkGreen}></Ionicons>
-                    </TouchableOpacity>
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
+                    <View style={styles.titleBar}>
+                        <Pressable onPress={handleLogout} style={{ marginRight: 16 }}>
+                            <Ionicons name="ios-log-out" size={60} color={darkGreen}></Ionicons>
+                        </Pressable>
+                    </View>
 
-                    { /*<Ionicons name="ios-arrow-back" size={24} color="#52575D"></Ionicons>*/}
-                    { /*<Ionicons name="md-more" size={24} color="#52575D"></Ionicons>*/}
-                </View>
+                    <View style={{ alignSelf: "center" }}>
+                        <View style={styles.profileImage}>
+                            {userInfo && userInfo.image ? (
+                                <Image source={{ uri: `data:image/png;base64,${userInfo.image}` }} style={styles.image} resizeMode="center"></Image>
+                            ) : (
+                                <Text>Loading...</Text>
+                            )}
+                        </View>
+                        <View style={styles.dm}>
+                            { /*<MaterialIcons name="chat" size={18} color="#DFD8C8"></MaterialIcons>*/}
+                        </View>
+                        <View style={styles.active}></View>
+                        <View style={styles.add}>
+                            <TouchableOpacity onPress={selectImage}>
+                                <Ionicons name="ios-add" size={48} color="#DFD8C8" style={{ justifyContent: 'center', alignItems: 'center' }}></Ionicons>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
 
-                <View style={{ alignSelf: "center" }}>
-                    <View style={styles.profileImage}>
-                    {userInfo && userInfo.image ? (
-                            <Image source={{ uri: `data:image/png;base64,${userInfo.image}` }} style={styles.image} resizeMode="center"></Image>
-                        ) : (
-                            <Text>Loading...</Text>
+                    <View style={styles.infoContainer}>
+                        {userInfo && (
+                            <>
+                                <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>
+                                    {userInfo.name}
+                                </Text>
+                                <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>
+                                    {userInfo.gender}
+                                </Text>
+                                <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>
+                                    {userInfo.email}
+                                </Text>
+                            </>
                         )}
                     </View>
-                    <View style={styles.dm}>
-                        { /*<MaterialIcons name="chat" size={18} color="#DFD8C8"></MaterialIcons>*/}
-                    </View>
-                    <View style={styles.active}></View>
-                    <View style={styles.add}>
-                        <TouchableOpacity onPress={selectImage}>
-                            <Ionicons name="ios-add" size={48} color="#DFD8C8" style={{ justifyContent:'center', alignItems:'center' }}></Ionicons>
-                        </TouchableOpacity>
-                    </View>
-                </View>
 
-                <View style={styles.infoContainer}>
-                 {userInfo && (
-                        <>
-                            <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>
-                            {userInfo.name}
+                    <View style={styles.statsContainer}>
+                        <View style={styles.statsBox}>
+                            <Text style={[styles.text, { fontSize: 24 }]}>
+                                {(userInfo?.userPastTickets?.length || 0) + (userInfo?.userTickets?.length || 0)}
                             </Text>
-                            <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>
-                            {userInfo.gender}
+                            <Text style={[styles.text, styles.subText]}>Events</Text>
+                        </View>
+
+                        <Pressable style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]} onPress={() => navigation.navigate("Removefriends")}>
+                            <Text style={[styles.text, { fontSize: 24 }]}>
+                                {(userInfo?.friends?.length || 0)}
                             </Text>
-                            <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>
-                           {userInfo.email}
+                            <Text style={[styles.text, styles.subText]}>Friends</Text>
+                        </Pressable >
+                        <View style={styles.statsBox} >
+                            <Text style={[styles.text, { fontSize: 24 }]}>0</Text>
+                            <Text style={[styles.text, styles.subText]}>Tokens</Text>
+                        </View>
+                    </View>
+
+                    <View style={{ marginTop: 32 }}>
+                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                            {userInfo && userInfo.historyoftickets && userInfo.historyoftickets.length > 0 ? (
+                                userInfo.historyoftickets.map((event, index) => {
+                                    const eventDate = new Date(event.dateAndHour);
+                                    const date = eventDate.getDate(); // Day of the month
+                                    const month = eventDate.toLocaleString('default', { month: 'long' });
+
+                                    return (
+                                        <View style={styles.mediaImageContainer} key={index}>
+                                            <ImageBackground
+                                                style={styles.ClubImage}
+                                                imageStyle={styles.ClubImage}
+                                                source={{ uri: event.image }}
+                                            >
+                                                <View style={styles.overlay}>
+                                                    <Text style={styles.dateTitle}>{date}</Text>
+                                                    <Text style={styles.monthTitle}>{month}</Text>
+                                                </View>
+                                            </ImageBackground>
+                                        </View>
+                                    );
+                                })
+                            ) : (
+                                <Text>No past events found.</Text>
+                            )}
+                        </ScrollView>
+                        <View style={styles.mediaCount}>
+                            <Text style={[styles.text, { fontSize: 24, color: "#DFD8C8", fontWeight: "300" }]}>
+                                {(userInfo?.userPastTickets?.length || 0)}
                             </Text>
-                        </>
-                        )}
-                </View>
+                            <Text style={[styles.text, { fontSize: 12, color: "#DFD8C8", textTransform: "uppercase" }]}>Past Events</Text>
+                        </View>
+                    </View>
 
-                <View style={styles.statsContainer}>
-                    <View style={styles.statsBox}>
-                    <Text style={[styles.text, { fontSize: 24 }]}>
-                    {(userInfo?.userPastTickets?.length || 0) + (userInfo?.userTickets?.length || 0)}
-                    </Text>
-                        <Text style={[styles.text, styles.subText]}>Events</Text>
-                    </View>
-                    <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
-                    <Text style={[styles.text, { fontSize: 24 }]}>
-                        {(userInfo?.friends?.length || 0)}
-                        </Text>
-                        <Text style={[styles.text, styles.subText]}>Friends</Text>
-                    </View>
-                    <View style={styles.statsBox}>
-                        <Text style={[styles.text, { fontSize: 24 }]}>0</Text>
-                        <Text style={[styles.text, styles.subText]}>Tokens</Text>
-                    </View>
-                </View>
-
-                <View style={{ marginTop: 32 }}>
-                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {userInfo && userInfo.historyoftickets && userInfo.historyoftickets.length > 0 ? (
-                        userInfo.historyoftickets.map((event, index) => {
-                            const eventDate = new Date(event.dateAndHour);
-                            const date = eventDate.getDate(); // Day of the month
-                            const month = eventDate.toLocaleString('default', { month: 'long' });
-
-                            return (
-                            <View style={styles.mediaImageContainer} key={index}>
-                                <ImageBackground
-                                style={styles.ClubImage}
-                                imageStyle={styles.ClubImage}
-                                source={{ uri: event.image }}
-                                >
-                                <View style={styles.overlay}>
-                                    <Text style={styles.dateTitle}>{date}</Text>
-                                    <Text style={styles.monthTitle}>{month}</Text>
-                                </View>
-                                </ImageBackground>
-                            </View>
-                            );
-                        })
-                        ) : (
-                        <Text>No past events found.</Text>
-                        )}
-                    </ScrollView>
-                    <View style={styles.mediaCount}>
-                    <Text style={[styles.text, { fontSize: 24, color: "#DFD8C8", fontWeight: "300" }]}>
-                        {(userInfo?.userPastTickets?.length || 0)}
-                        </Text>
-                        <Text style={[styles.text, { fontSize: 12, color: "#DFD8C8", textTransform: "uppercase" }]}>Past Events</Text>
-                    </View>
-                </View>
-                
-            </ScrollView>
+                </ScrollView>
             </View>
         </SafeAreaView>
     );
@@ -226,10 +217,10 @@ const styles = StyleSheet.create({
     scrollContainer: {
         flex: 1,
         marginBottom: 0, // Add padding to the bottom
-      },
-      scrollViewContent: {
-        paddingBottom: Dimensions.get('window').height*0.2, // Add padding to the bottom
-      },
+    },
+    scrollViewContent: {
+        paddingBottom: Dimensions.get('window').height * 0.2, // Add padding to the bottom
+    },
 
     text: {
         fontFamily: "HelveticaNeue",
@@ -352,24 +343,24 @@ const styles = StyleSheet.create({
         height: 200,
         justifyContent: 'flex-end',
         borderRadius: 10,
-      },
+    },
     overlay: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
-      },
-      dateTitle: {
+    },
+    dateTitle: {
         color: 'white',
         fontSize: 40,
         textTransform: 'uppercase',
-      },
-      monthTitle: {
+    },
+    monthTitle: {
         color: 'white',
         fontSize: 20,
         textTransform: 'uppercase',
-      },
+    },
 });
 
 export default Profile;

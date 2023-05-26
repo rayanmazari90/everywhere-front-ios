@@ -11,8 +11,8 @@ const Home = (props) => {
     return (
         <Background>
             <View style={[styles.container, isSmallScreen && styles.containerSmall]}>
-                <Text style={[styles.title, isSmallScreen && styles.titleSmall]}>Let's start</Text>
-                <Text style={[styles.title, styles.title2, isSmallScreen && styles.titleSmall]}>Coding</Text>
+                <Text style={[styles.title, isSmallScreen && styles.titleSmall]}>Everywhere</Text>
+                <Text style={[styles.title, styles.title2, isSmallScreen && styles.titleSmall]}>Beta V0.1</Text>
                 <Btn bgColor={green} textColor='white' btnLabel="Login" Press={() => props.navigation.navigate("Login")} />
                 <Btn bgColor='white' textColor={darkGreen} btnLabel="Signup" Press={() => props.navigation.navigate("SignUp")} />
             </View>
@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
     },
     title: {
         color: 'white',
-        fontSize: 64,
+        fontSize: 50,
     },
     titleSmall: {
-        fontSize: 32,
+        fontSize: 25,
     },
     title2: {
         marginBottom: 40,

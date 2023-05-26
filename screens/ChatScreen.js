@@ -1,10 +1,10 @@
 
-import bg from '../assets/leaves.jpg';
 import React, { useLayoutEffect, useState, useEffect } from 'react';
 import {
     StyleSheet, ImageBackground, FlatList, KeyboardAvoidingView,
     Platform, TextInput, Text, View, TouchableOpacity
 } from 'react-native';
+import bg from '../assets/leaves.jpg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,6 +16,7 @@ import { useLeaveGroupMutation } from '../services/appApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-picker';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import RNFS from 'react-native-fs';
 
 // ...
 
@@ -26,6 +27,7 @@ const ChatScreen = ({ route, navigation }) => {
     const user = useSelector((state) => state.user);
     const userId = user.user._id;
     const [chatMessages, setChatMessages] = useState([]);
+    const [selectedImage, setSelectedImage] = useState(null);
     const [message, setMessage] = useState("");
     const { id, name, members, event_group_Id } = route.params;
     const [prevSenderId, setPrevSenderId] = useState(null);
@@ -76,8 +78,8 @@ const ChatScreen = ({ route, navigation }) => {
         });
     }, [socket]);
 
-    const handleNewMessage = () => {
-        socket.emit("newMessage", {
+    const handleNewMessageImage = (image) => {
+        const messageData = {
             conversationId: id,
             message,
             sender: userId,
@@ -85,7 +87,27 @@ const ChatScreen = ({ route, navigation }) => {
             isRead: false,
             createdAt: new Date(),
             updatedAt: new Date()
-        });
+        };
+        if (image || selectedImage) {
+            messageData.message = image || selectedImage;
+        }
+        socket.emit("newMessage", messageData);
+        setMessage("");
+        setSelectedImage(null);
+    };
+
+
+    const handleNewMessage = () => {
+        const messageData = {
+            conversationId: id,
+            message,
+            sender: userId,
+            receiver: receiverID,
+            isRead: false,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+        socket.emit("newMessage", messageData);
         setMessage("");
     };
 
@@ -98,13 +120,21 @@ const ChatScreen = ({ route, navigation }) => {
             },
         };
 
-        launchImageLibrary(options, (response) => {
-            if (response.uri) {
-                console.log("check");
+        launchImageLibrary(options, async (response) => {
+            if (response.assets && response.assets[0].uri) {
+                let filePath = response.assets[0].uri;
+                if (Platform.OS === 'ios') {
+                    filePath = filePath.replace('file://', '');
+                }
+                try {
+                    const image = await RNFS.readFile(filePath, 'base64');
+                    handleNewMessageImage(image);
+                } catch (error) {
+                    console.error(error);
+                }
             }
         });
     };
-
 
     const handleTakePhoto = () => {
         var options = {
@@ -115,12 +145,16 @@ const ChatScreen = ({ route, navigation }) => {
             },
         };
 
-        launchCamera(options, response => {
-            if (response.uri) {
-                console.log(response.uri);
-                // send the picture, handle the response.uri
-                // note that the response also contains other information you might need
-                // such as the original file name, or the image width and height
+        launchCamera(options, async (response) => {
+            if (response.assets && response.assets[0].uri) {
+                let filePath = response.assets[0].uri;
+
+                try {
+                    const image = await RNFS.readFile(filePath, 'base64');
+                    handleNewMessageImage(image);
+                } catch (error) {
+                    console.error(error);
+                }
             } else if (response.didCancel) {
                 console.log('User cancelled photo picker');
             } else if (response.error) {
@@ -130,6 +164,7 @@ const ChatScreen = ({ route, navigation }) => {
             }
         });
     };
+
 
     return (
         <ImageBackground source={bg} style={styles.bg}>

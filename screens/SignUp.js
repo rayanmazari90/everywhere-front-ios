@@ -1,24 +1,19 @@
 import React, { useState } from 'react';
-import { Alert, View, Text, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import { Alert, View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import Background from '../components/Background';
 import Btn from '../components/Btn';
 import { darkGreen } from '../components/Constant_color';
 import Field from '../components/Field';
 import { useNavigation } from '@react-navigation/native';
 import { useSignupUserMutation } from "../services/appApi";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-
-
 
 const SignUp = (props) => {
+    const [message, setMessage] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isEmailValid, setIsEmailValid] = useState(null);
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigation = useNavigation();
     const [signupUser, { isLoading, error }] = useSignupUserMutation();
     function handleEmailChange(text) {
@@ -47,31 +42,23 @@ const SignUp = (props) => {
 
         // Password should contain at least one lowercase letter, one uppercase letter, one digit and one special character
         const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
+        console.log(regex.test(password))
         return regex.test(password);
     }
 
-    /*const handleSendCode = async () => {
-        try {
-            await axios.post('http://192.168.56.1:5001/users/send-code', {
-                email,
-            });
-        } catch (err) {
-            console.error(err);
-        }
-    };*/
 
     async function passtosignup() {
         try {
             if (email.endsWith("@student.ie.edu")) {
-                if (isPasswordValid) {
+                if (isPasswordValid(password)) {
                     const { data } = await signupUser({ name, email, password });
-                    console.log(data);
-                    navigation.navigate("VerifyEmailScreen", { email });
+                    navigation.navigate("SignUpInfo", { email });
                 } else {
-                    Alert.alert("Password is not secure")
+                    setMessage("Password is not secure")
                 }
             } else {
-                Alert.alert("Please enter valid IE email")
+                setMessage('Please enter valid IE email');
+
             }
 
         } catch (error) {
@@ -86,62 +73,53 @@ const SignUp = (props) => {
                     style={styles.title}>
                     Register
                 </Text>
-                
+
                 <View
-                   style={styles.form}>
-                        <Text style={styles.subTitle}>
-                            Welcome to everywhere
-                        </Text>
-                        <Text
+                    style={styles.form}>
+                    <Text style={styles.subTitle}>
+                        Welcome to everywhere
+                    </Text>
+                    <Text
                         style={styles.label}>
                         Create a new account
-                        </Text>
-                        <Field placeholder="Name" onChangeText={(text) => setName(text)} value={name} />
-                        <Field
-                            placeholder="Email / Username"
-                            keyboardType={'email-address'}
-                            onChangeText={handleEmailChange}
-                            value={email}
-                            rightElement={<EmailValidityIndicator isValid={isEmailValid} />}
-                        />
-                    
-                            <Field
-                                placeholder="Password"
-                                secureTextEntry={!showPassword}
-                                onChangeText={(text) => setPassword(text)}
-                                value={password}
-                                rightElement={<TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                <Text style={styles.showHideButton}>{showPassword ? <MaterialCommunityIcons style={styles.send} name="eye-remove" size={20} color={darkGreen}/> : <MaterialCommunityIcons style={styles.send} name="eye" size={20} color={darkGreen}/>}</Text>
-                            </TouchableOpacity>}
-                            />
-                            
-                            <Field
-                                placeholder="Confirm Password"
-                                secureTextEntry={!showConfirmPassword}
-                                onChangeText={(text) => setConfirmPassword(text)}
-                                value={confirmPassword}
-                                style={{ marginRight: 111 }}
-                                rightElement={ 
-                                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                <Text style={styles.showHideButton}>{showConfirmPassword ? <MaterialCommunityIcons style={styles.send} name="eye-remove" size={20} color={darkGreen}/> : <MaterialCommunityIcons style={styles.send} name="eye" size={20} color={darkGreen}/>}</Text>
-                            </TouchableOpacity>}
-                            />
-                            
-                        <View style={{ width: '100%', alignItems: 'center' }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', width: '78%',  justifyContent: "center"}}>
-                                <Text numberOfLines={3} ellipsizeMode="tail" style={{ color: 'grey', fontSize: 12,textAlign: "center"}}>
-                                    By signing up, you agree to our{' '}
-                                    <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 12 }}>
-                                        Terms & Conditions
-                                    </Text>
-                                    {' '}
-                                    <Text style={{ color: 'grey', fontSize: 16 }}>and </Text>
-                                    <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 12 }}>
-                                        Privacy Policy
-                                    </Text>
+                    </Text>
+                    <Field placeholder="Name" onChangeText={(text) => setName(text)} value={name} />
+                    <Field
+                        placeholder="Email / Username"
+                        keyboardType={'email-address'}
+                        onChangeText={handleEmailChange}
+                        value={email}
+                        rightElement={<EmailValidityIndicator isValid={isEmailValid} />}
+                    />
+
+
+                    <Field
+                        placeholder="Password"
+                        secureTextEntry={true}
+                        onChangeText={(text) => setPassword(text)}
+                        value={password}
+                    />
+                    <Field
+                        placeholder="Confirm Password"
+                        secureTextEntry={true}
+                        onChangeText={(text) => setConfirmPassword(text)}
+                        value={confirmPassword}
+                    />
+                    <View style={{ width: '100%', alignItems: 'center' }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', width: '78%', paddingRight: 16, paddingTop: 10, paddingBottom: 10 }}>
+                            <Text numberOfLines={3} ellipsizeMode="tail" style={{ color: 'grey', fontSize: 16, textAlign: "center" }}>
+                                By signing up, you agree to our{' '}
+                                <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 16 }}>
+                                    Terms & Conditions
                                 </Text>
-                            </View>
+                                {' '}
+                                <Text style={{ color: 'grey', fontSize: 16 }}>and </Text>
+                                <Text style={{ color: darkGreen, fontWeight: 'bold', fontSize: 16 }}>
+                                    Privacy Policy
+                                </Text>
+                            </Text>
                         </View>
+                    </View>
                     <Btn
                         textColor="white"
                         bgColor={darkGreen}
@@ -213,11 +191,6 @@ const styles = StyleSheet.create({
         color: darkGreen,
         fontSize: Dimensions.get('window').height * 0.035,
         fontWeight: 'bold',
-    },
-    password: {
-        flexDirection: 'row',
-        alignItems: 'center',
-
     },
 });
 

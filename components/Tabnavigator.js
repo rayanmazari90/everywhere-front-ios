@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform, StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-
+import { green,darkGreen } from '../components/Constant_color';
 import Home from "../screens/Home";
 import Mapcomp from "../screens/Mapcomp";
 import Profile from "../screens/profile";
@@ -12,6 +12,11 @@ import TicketScreen from "../screens/TicketsPage";
 import MyTicket from '../screens/MyTickets';
 //import Profile from "../screens/Profile";
 const Tab = createBottomTabNavigator();
+//const colormap= '#4d84e2'
+//const colornonfocus= '#748c94'
+const colormap=  green
+const colornonfocus= '#748c94'
+
 const CustomTabBarButton= ({children, onPress}) =>(
     <TouchableOpacity
     style= {{
@@ -26,7 +31,7 @@ const CustomTabBarButton= ({children, onPress}) =>(
             width: 70,
             height: 70,
             borderRadius: 35,
-            backgroundColor: '#4d84e2'
+            backgroundColor: colormap
         }}>
             {children}
         </View>
@@ -65,11 +70,11 @@ const TabNavigator = () => {
                 style={{
                     width: 30,
                     height: 30,
-                    tintColor: focused ? '#4d84e2' : '#748c94'
+                    tintColor: focused ? colormap : colornonfocus
                 }}
                 />
                 <Text
-                style={{ color: focused ? '#4d84e2' : '#748c94' , fontSize: 16}}
+                style={{ color: focused ? colormap : colornonfocus , fontSize: 16}}
                 > 
                     
                     Profile
@@ -89,11 +94,11 @@ const TabNavigator = () => {
                     style={{
                         width: 30,
                         height: 30,
-                        tintColor: focused ? '#4d84e2' : '#748c94'
+                        tintColor: focused ? colormap : colornonfocus
                     }}
                     />
                     <Text
-                    style={{ color: focused ? '#4d84e2' : '#748c94' , fontSize: 16}}
+                    style={{ color: focused ? colormap : colornonfocus , fontSize: 16}}
                     > 
                     Events
                     </Text>
@@ -114,7 +119,7 @@ const TabNavigator = () => {
                 style={{
                     width: 40,
                     height: 40,
-                    tintColor: focused ? '#FFFF' : '#748c94'
+                    tintColor: focused ? '#FFFF' : colornonfocus
                 }}
                 />
         ),
@@ -140,11 +145,11 @@ const TabNavigator = () => {
                 style={{
                     width: 30,
                     height: 30,
-                    tintColor: focused ? '#4d84e2' : '#748c94'
+                    tintColor: focused ? colormap : colornonfocus
                 }}
                 />
                 <Text
-                style={{ color: focused ? '#4d84e2' : '#748c94' , fontSize: 16}}
+                style={{ color: focused ? colormap : colornonfocus , fontSize: 16}}
                 >
                     Chat
                 </Text>
@@ -162,11 +167,11 @@ const TabNavigator = () => {
                 style={{
                     width: 30,
                     height: 30,
-                    tintColor: focused ? '#4d84e2' : '#748c94'
+                    tintColor: focused ? colormap : colornonfocus
                 }}
                 />
                 <Text
-                style={{ color: focused ? '#4d84e2' : '#748c94' , fontSize: 16}}
+                style={{ color: focused ? colormap : colornonfocus , fontSize: 16}}
                 > 
                     
                     Tickets

@@ -31,9 +31,18 @@ const FriendRequestItem = ({ requester, onFriendAction }) => {
         }
     };
 
+    const isUrl = requester.image && requester.image.startsWith('http');
+
     return (
         <View style={styles.container}>
-            {/*<Image source={{ uri: requester.image }} style={styles.image} />*/}
+            {
+                isUrl ?
+                    <Image source={{ uri: requester.image }} style={styles.image} />
+                    :
+                    <Image source={{ uri: `data:image/png;base64,${requester.image}` }} style={styles.image} />
+
+            }
+
             <View style={styles.content}>
                 <View style={styles.row}>
                     <Text numberOfLines={1} style={styles.name}>

@@ -22,7 +22,7 @@ const VerifyEmailScreen = () => {
             });
             if (response.data.status === 200) {
                 setMessage('Email address verified!');
-                navigation.navigate('SignUpInfo');
+                navigation.navigate('Main');
             } else {
                 setMessage('Invalid verification code!');
             }

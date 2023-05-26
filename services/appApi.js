@@ -2,6 +2,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {url_back}  from "../components/connection_url";
 
+
 // define a service user a base URL
 
 const appApi = createApi({
@@ -56,13 +57,6 @@ const appApi = createApi({
                 },
             }),
         }),
-        removeFriend: builder.mutation({
-            query: (payload) => ({
-                url: "/users/removefriend",
-                method: "PUT",
-                body: payload,
-            }),
-        }),
 
         //Add Friend
         addFriend: builder.mutation({
@@ -72,6 +66,16 @@ const appApi = createApi({
                 body: payload,
             }),
         }),
+
+        //remove Friend
+        removeFriend: builder.mutation({
+            query: (payload) => ({
+                url: "/users/removefriend",
+                method: "PUT",
+                body: payload,
+            }),
+        }),
+
         cancelInvitation: builder.mutation({
             query: (payload) => ({
                 url: "/users/cancelinvitation",
@@ -87,19 +91,12 @@ const appApi = createApi({
                 body: payload,
             }),
         }),
+
         acceptInvitation: builder.mutation({
             query: (payload) => ({
                 url: "/users/acceptinvitation",
                 method: "PUT",
                 body: payload,
-            }),
-        }),
-
-        getRequesters: builder.mutation({
-            query: (payload) => ({
-                url: "/users/getrequesters",
-                method: "GET",
-                params: payload,
             }),
         }),
 
@@ -201,6 +198,7 @@ const appApi = createApi({
                 },
             }),
         }),
+
         updateUserLocation: builder.mutation({
             query: (payload) => ({
                 url: "/users/update-location",
@@ -222,8 +220,8 @@ const appApi = createApi({
 export const { useSignupUserMutation, useLoginUserMutation, useEventsgetMutation, useLogoutUserMutation, useVerifyUserMutation,
     useClubsgetMutation, useGetGroupsMutation, useGetconvsMutation, useJoinGroupMutation, useFindSenderMutation,
     useLeaveGroupMutation, useEventsByClubGetQuery, useTicketsByEventGetQuery, useTicketsByUserPostMutation, useSignUpInfoMutation,
-    useAddFriendMutation, useGetRequestersMutation, useUserCurrentTicketsByuseridGetQuery, useCancelInvitationMutation, useAcceptInvitationMutation, 
-    useDeclineInvitationMutation, useUserInfoProfilePageGetQuery,useRemoveFriendMutation,useUpdateUserImageMutation,useUpdateUserLocationMutation, useLocationsGetMutation } = appApi; // Add this line
+    useAddFriendMutation, useGetRequestersMutation, useCancelInvitationMutation, useAcceptInvitationMutation, useDeclineInvitationMutation,
+    useRemoveFriendMutation, useUpdateUserImageMutation, useUserInfoProfilePageGetQuery, useUserCurrentTicketsByuseridGetQuery,
+    useUpdateUserLocationMutation, useLocationsGetMutation } = appApi;
 
 export default appApi;
-

@@ -58,6 +58,14 @@ const Message = ({ message, prevSenderId, prevSenderIdreverse }) => {
             return null;
         }
     };
+    const senderImage = getSenderImage();
+    const isUrlPdp = senderImage && senderImage.startsWith('http');
+
+    const isBase64 = (str) => {
+        const base64regex = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/;
+        return base64regex.test(str);
+    };
+
 
     return (
         <View>
@@ -68,7 +76,11 @@ const Message = ({ message, prevSenderId, prevSenderIdreverse }) => {
                 styles.container,
                 { flexDirection: isMyMessage() ? 'row-reverse' : 'row' }
             ]}>
-                {message.sender !== prevSenderId && !isMyMessage() && <Image source={{ uri: getSenderImage() }} style={styles.image} />}
+                {message.sender !== prevSenderId && !isMyMessage() && (
+                    isUrlPdp ?
+                        <Image source={{ uri: senderImage }} style={styles.image} /> :
+                        <Image source={{ uri: `data:image/png;base64,${senderImage}` }} style={styles.image} />
+                )}
                 <View style={[
                     styles.messageContainer,
                     {
@@ -76,11 +88,19 @@ const Message = ({ message, prevSenderId, prevSenderIdreverse }) => {
                         marginLeft: samesender() ? 60 : 0,
                     }
                 ]}>
-                    {message.message.startsWith('http') ? (
-                        <Image source={{ uri: message.message }} style={{ width: 100, height: 100 }} />
-                    ) : (
-                        <Text>{message.message}</Text>
-                    )}
+                    {
+                        message.message.startsWith('http') ? (
+                            <Image source={{ uri: message.message }} style={{ width: 100, height: 100 }} />
+                        ) : (
+                            message.message.length > 1000 ? (
+                                <Image source={{ uri: `data:image/png;base64,${message.message}` }} style={{ width: 100, height: 100 }} />
+                            ) : (
+                                <Text>{message.message}</Text>
+                            )
+                        )
+                    }
+
+
                     <Text style={styles.time}>{dayjs(message.createdAt).fromNow(true)}</Text>
                 </View>
             </View>

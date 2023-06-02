@@ -1,4 +1,5 @@
 module.exports = {
+  parser: "babel",
   arrowParens: 'avoid',
   bracketSameLine: true,
   bracketSpacing: false,

@@ -1,7 +1,17 @@
+#plugin 'cocoapods-static-swift-framework'
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 $RNMapboxMapsImpl = 'mapbox'
+#$RNFirebaseAsStaticFramework = true
+
 platform :ios, min_ios_version_supported
+pod 'Firebase', :modular_headers => true
+pod 'FirebaseCoreInternal', :modular_headers => true
+pod 'GoogleUtilities', :modular_headers => true
+pod 'FirebaseCore', :modular_headers => true
+pod 'Firebase/CoreOnly', '10.10.0', :modular_headers => true
+
+use_react_native!
 prepare_react_native_project!
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
@@ -21,7 +31,11 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+#use_frameworks! :linkage => :static
+#$RNFirebaseAsStaticFramework = true
+
 target 'everywhere' do
+  #use_frameworks!
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -38,7 +52,7 @@ target 'everywhere' do
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable the next line.
-    :flipper_configuration => flipper_config,
+    #:flipper_configuration => flipper_config,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -52,7 +66,6 @@ target 'everywhere' do
     $RNMapboxMaps.pre_install(installer)
     #... other pre install hooks
   end
-
 
   post_install do |installer|
     $RNMapboxMaps.post_install(installer)

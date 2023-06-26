@@ -10,10 +10,10 @@ import {
   KeyboardAvoidingView
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useVerifyUserMutation } from "../services/appApi";
+import { useVerifyForgetPasswordMutation } from "../services/appApi";
 import Background from "../components/Background";
 
-const VerifyEmailScreen = () => {
+const VerifyForgetPassword = () => {
   const [verificationCode, setCode] = useState("");
   const [message, setMessage] = useState("");
   const inputRef1 = useRef(null);
@@ -22,16 +22,19 @@ const VerifyEmailScreen = () => {
   const inputRef4 = useRef(null);
   const navigation = useNavigation();
   const route = useRoute();
-  const [verifyUser, { isLoading, error }] = useVerifyUserMutation();
-  const handleVerifyEmail = async () => {
+  const email = route.params.email;
+  const [verifyForgetPassword, { isLoading, error }] =
+    useVerifyForgetPasswordMutation();
+
+  const handleVerifyForgetPassword = async () => {
     try {
-      const response = await verifyUser({
+      const response = await verifyForgetPassword({
         email: route.params.email,
         verificationCode
       });
       if (response.data.status === 200) {
         setMessage("Email address verified!");
-        navigation.navigate("Main");
+        navigation.navigate("ChangePassword", { email });
       } else {
         setMessage("Invalid verification code!");
       }
@@ -110,7 +113,10 @@ const VerifyEmailScreen = () => {
               onChangeText={(text) => handleTextChange(text, 3)}
             />
           </View>
-          <TouchableOpacity style={styles.verify} onPress={handleVerifyEmail}>
+          <TouchableOpacity
+            style={styles.verify}
+            onPress={handleVerifyForgetPassword}
+          >
             <Text style={styles.verifyText}>Verify Email</Text>
           </TouchableOpacity>
           <Text style={styles.message}>{message}</Text>
@@ -149,7 +155,7 @@ const styles = StyleSheet.create({
   },
 
   codeInput: {
-    width: 35,
+    width: 50,
     height: 50,
     borderWidth: 2,
     borderRadius: 5,
@@ -160,6 +166,7 @@ const styles = StyleSheet.create({
     borderColor: "#dedcdc",
     backgroundColor: "#dedcdc"
   },
+
   verify: {
     backgroundColor: "#022b73",
     borderRadius: 50,
@@ -175,4 +182,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default VerifyEmailScreen;
+export default VerifyForgetPassword;

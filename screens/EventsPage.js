@@ -4,6 +4,7 @@ import { green, darkGreen } from "../components/Constant_color";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTicketsByEventGetQuery } from "../services/appApi";
+
 import {
   View,
   Text,
@@ -13,7 +14,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Image,
-  SafeAreaView,
+  SafeAreaView
 } from "react-native";
 import ScrollZoomHeader from "react-native-header-zoom-scroll";
 import { format } from "date-fns";
@@ -52,7 +53,7 @@ const CountdownEvent = ({ eventDate }) => {
           alignItems: "center",
           backgroundColor: darkGreen,
           borderRadius: 10,
-          padding: 10,
+          padding: 10
         }}
       >
         <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
@@ -72,11 +73,12 @@ const EventsPage = () => {
   const [event, setEvents] = useState(null);
   const [tickets, setTickets] = useState(null);
   const [expiredTickets, setExpiredTickets] = useState({});
+  const [dateFilter, setDateFilter] = useState(null);
 
   const onShare = async () => {
     try {
       const shareResponse = await Share.open({
-        message: `Check out this event: ${event.eventName}!`,
+        message: `Check out this event: ${event.eventName}!`
       });
     } catch (error) {
       console.log("Error => ", error);
@@ -104,9 +106,9 @@ const EventsPage = () => {
     data: TicketsData,
     isLoading: isLoadings,
     isError,
-    refetch,
+    refetch
   } = useTicketsByEventGetQuery(event ? event._id : null, {
-    enabled: !!event, // execute the query only when 'event' is available
+    enabled: !!event // execute the query only when 'event' is available
   }); // Pass the trigger as a dependency to the hook
 
   useEffect(() => {
@@ -145,7 +147,7 @@ const EventsPage = () => {
               ? {}
               : navigation.navigate("TicketsPage", {
                   event: event,
-                  ticket: ticket,
+                  ticket: ticket
                 })
           }
           activeOpacity={isExpired ? 1 : 0.2}
@@ -157,7 +159,7 @@ const EventsPage = () => {
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
-              width: "100%",
+              width: "100%"
             }}
           >
             <Text style={styles.ticketExpiration}>Time Left </Text>
@@ -167,7 +169,7 @@ const EventsPage = () => {
               onExpire={() =>
                 setExpiredTickets((prevState) => ({
                   ...prevState,
-                  [ticket._id]: true,
+                  [ticket._id]: true
                 }))
               }
             />
@@ -177,7 +179,7 @@ const EventsPage = () => {
             style={{
               flexDirection: "row",
               alignItems: "center",
-              width: "100%",
+              width: "100%"
             }}
           >
             <Text style={styles.ticketLeft}>Tickets Left: </Text>
@@ -233,7 +235,7 @@ const EventsPage = () => {
         style={{
           justifyContent: "center",
           alignItems: "center",
-          maxWidth: "100%",
+          maxWidth: "100%"
         }}
       >
         <View
@@ -245,7 +247,7 @@ const EventsPage = () => {
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.25,
             shadowRadius: 3.84,
-            elevation: 5,
+            elevation: 5
           }}
         >
           <Text style={{ color: "black", fontSize: 14, textAlign: "center" }}>
@@ -269,7 +271,7 @@ const EventsPage = () => {
               padding: 0,
               margin: 0,
               width: "100%",
-              height: "100%",
+              height: "100%"
             }}
           />
         }
@@ -288,7 +290,7 @@ const EventsPage = () => {
                 width: Dimensions.get("window").width * 0.13,
                 backgroundColor: "#f1f1f1",
                 zIndex: 10,
-                borderRadius: 10,
+                borderRadius: 10
               }}
             >
               <MaterialCommunityIcons
@@ -320,7 +322,7 @@ const EventsPage = () => {
                   style={{
                     fontWeight: "bold",
                     color: darkGreen,
-                    fontSize: fontSize,
+                    fontSize: fontSize
                   }}
                 >
                   {" "}
@@ -335,7 +337,7 @@ const EventsPage = () => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 10,
+                  marginTop: 10
                 }}
               >
                 <MaterialCommunityIcons
@@ -361,7 +363,7 @@ const EventsPage = () => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 10,
+                  marginTop: 10
                 }}
               >
                 <MaterialCommunityIcons
@@ -378,7 +380,7 @@ const EventsPage = () => {
                       {new Date(event.dateAndHour).getDate() +
                         " " +
                         new Date(event.dateAndHour).toLocaleString("default", {
-                          month: "long",
+                          month: "long"
                         })}
                     </Text>
                   </Text>
@@ -388,7 +390,7 @@ const EventsPage = () => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 10,
+                  marginTop: 10
                 }}
               >
                 <MaterialCommunityIcons
@@ -417,7 +419,7 @@ const EventsPage = () => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 10,
+                  marginTop: 10
                 }}
               >
                 <MaterialCommunityIcons
@@ -469,7 +471,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: -3 },
     elevation: 0,
-    zIndex: 0,
+    zIndex: 0
   },
   mainTitle: {
     fontSize: 24,
@@ -477,7 +479,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: green,
     textAlign: "center",
-    textTransform: "uppercase",
+    textTransform: "uppercase"
   },
 
   sectionTitle: {
@@ -485,7 +487,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 30,
     color: green,
-    paddingTop: 30,
+    paddingTop: 30
   },
 
   clubContainer: {
@@ -495,7 +497,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height / 2.5,
     justifyContent: "flex-end",
     borderRadius: 10,
-    marginBottom: 0,
+    marginBottom: 0
   },
 
   eventImage: {
@@ -504,14 +506,14 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     bottom: 0,
-    right: 0,
+    right: 0
   },
 
   ClubImage: {
     width: Dimensions.get("window").width * 0.9,
     height: 100,
     justifyContent: "flex-end",
-    borderRadius: 10,
+    borderRadius: 10
   },
 
   box: {
@@ -525,65 +527,65 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
-    zIndex: 0,
+    zIndex: 0
   },
 
   eventTitle: {
     color: "black",
     fontWeight: "bold",
-    fontSize: 12,
+    fontSize: 12
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#fff"
   },
   ClubImage: {
     width: Dimensions.get("window").width * 0.9,
     height: 150,
     justifyContent: "flex-end",
-    borderRadius: 10,
+    borderRadius: 10
   },
   ClubContainer: {
     marginRight: 10,
-    paddingBottom: 20,
+    paddingBottom: 20
   },
   dateTitle: {
     fontSize: 16,
     fontWeight: "bold",
     color: "white",
-    margin: 10,
+    margin: 10
   },
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.3)",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 10,
+    borderRadius: 10
   },
   dateTitle: {
     color: "white",
     fontSize: 40,
-    textTransform: "uppercase",
+    textTransform: "uppercase"
   },
   monthTitle: {
     color: "white",
     fontSize: 20,
-    textTransform: "uppercase",
+    textTransform: "uppercase"
   },
   eventTitle: {
     color: green,
     fontWeight: "bold",
     fontSize: 12,
-    textAlign: "center",
+    textAlign: "center"
   },
   eventname: {
     color: darkGreen,
     fontWeight: "bold",
     fontSize: 16,
     textTransform: "uppercase",
-    textAlign: "center",
+    textAlign: "center"
   },
 
   ticketContainer: {
@@ -594,32 +596,32 @@ const styles = StyleSheet.create({
     shadowColor: "#000000", // shadow color
     shadowOffset: {
       width: 0,
-      height: 2, // shadow will be on bottom of the box
+      height: 2 // shadow will be on bottom of the box
     },
     shadowOpacity: 0.25, // shadow density
     shadowRadius: 3.84, // blur radius of the shadow
-    elevation: 5, // for Android
+    elevation: 5 // for Android
   },
   ticketType: {
     padding: 10,
     textTransform: "uppercase",
     fontWeight: "bold",
-    color: green,
+    color: green
   },
   ticketDescription: {
-    padding: 10,
+    padding: 10
     //fontWeight: 'bold',
   },
   ticketExpiration: {
     color: darkGreen,
     fontWeight: "bold",
-    padding: 10,
+    padding: 10
   },
   ticketLeft: {
     color: darkGreen,
     fontWeight: "bold",
-    padding: 10,
-  },
+    padding: 10
+  }
 });
 
 export default EventsPage;

@@ -86,6 +86,7 @@ PODS:
     - MapboxMobileEvents (= 1.0.10)
     - Turf (~> 2.0)
   - MapboxMobileEvents (1.0.10)
+  - mobile-ffmpeg-https (4.4)
   - OpenSSL-Universal (1.1.1100)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -340,11 +341,19 @@ PODS:
     - glog
   - react-native-background-timer (2.4.1):
     - React-Core
+  - react-native-ffmpeg (0.5.2):
+    - React
+    - react-native-ffmpeg/https (= 0.5.2)
+  - react-native-ffmpeg/https (0.5.2):
+    - mobile-ffmpeg-https (= 4.4)
+    - React
   - react-native-geolocation (3.0.6):
     - React-Core
   - react-native-geolocation-service (5.3.1):
     - React
   - react-native-image-picker (5.3.1):
+    - React-Core
+  - react-native-image-resizer (1.4.5):
     - React-Core
   - react-native-maps (1.4.0):
     - React-Core
@@ -447,6 +456,8 @@ PODS:
     - React-jsi (= 0.71.4)
     - React-logger (= 0.71.4)
     - React-perflogger (= 0.71.4)
+  - rn-fetch-blob (0.12.0):
+    - React-Core
   - RNCAsyncStorage (1.18.0):
     - React-Core
   - RNCMaskedView (0.1.11):
@@ -557,9 +568,11 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
+  - react-native-ffmpeg (from `../node_modules/react-native-ffmpeg`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -578,6 +591,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
@@ -609,6 +623,7 @@ SPEC REPOS:
     - MapboxCoreMaps
     - MapboxMaps
     - MapboxMobileEvents
+    - mobile-ffmpeg-https
     - OpenSSL-Universal
     - SocketRocket
     - Turf
@@ -657,12 +672,16 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-background-timer:
     :path: "../node_modules/react-native-background-timer"
+  react-native-ffmpeg:
+    :path: "../node_modules/react-native-ffmpeg"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-image-resizer:
+    :path: "../node_modules/react-native-image-resizer"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-netinfo:
@@ -699,6 +718,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
@@ -747,6 +768,7 @@ SPEC CHECKSUMS:
   MapboxCoreMaps: 24270c7c6b8cb71819fc2f3c549db9620ee4d019
   MapboxMaps: cb76511b98d3b95c74b0771ed105bc69f30ace6b
   MapboxMobileEvents: de50b3a4de180dd129c326e09cd12c8adaaa46d6
+  mobile-ffmpeg-https: 311fc4a8f671cf36d1d6b8f421e8246b790978d9
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: 5a024fdf458fa8c0d82fc262e76f982d4dcdecdd
@@ -763,9 +785,11 @@ SPEC CHECKSUMS:
   React-jsinspector: 1f51e775819199d3fe9410e69ee8d4c4161c7b06
   React-logger: 0d58569ec51d30d1792c5e86a8e3b78d24b582c6
   react-native-background-timer: 17ea5e06803401a379ebf1f20505b793ac44d0fe
+  react-native-ffmpeg: 587fa045f985d775107f4b8cbb6c79df0ad68e63
   react-native-geolocation: 0f7fe8a4c2de477e278b0365cce27d089a8c5903
   react-native-geolocation-service: 608e1da71a1ac31b4de64d9ef2815f697978c55b
   react-native-image-picker: ec9b713e248760bfa0f879f0715391de4651a7cb
+  react-native-image-resizer: d9fb629a867335bdc13230ac2a58702bb8c8828f
   react-native-maps: 7135a33610202745d08fdf151ce6b0d01952a99c
   react-native-netinfo: ccbe1085dffd16592791d550189772e13bf479e2
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
@@ -784,6 +808,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: ad17efcfb2fa8f6bfd8ac0cf48d96668b8b28e0b
   React-runtimeexecutor: 8fa50b38df6b992c76537993a2b0553d3b088004
   ReactCommon: b49a4b00ca6d181ff74b17c12b2d59ac4add0bde
+  rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNCAsyncStorage: a46ee6bf15cf1ba863d0a47287236f9c95d5b213
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNCPicker: 0bc2f0a29abcca7b7ed44a2d036aac9ab6d25700

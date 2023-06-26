@@ -8,7 +8,7 @@ import {
   View,
   Text,
   Dimensions,
-  Modal,
+  Modal
 } from "react-native";
 import { Provider, useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -18,6 +18,9 @@ import data from "./components/keystorage.json";
 import { darkGreen, green } from "./components/Constant_color";
 import NetInfo from "@react-native-community/netinfo";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+
+// Provider
+import { GhostModeProvider } from "./components/GhostModeContext";
 
 //Import pages
 import Home from "./screens/Home";
@@ -33,6 +36,7 @@ import TicketsPage from "./screens/TicketsPage";
 import Addfriends from "./screens/Addfriends";
 import Joingroup from "./screens/Joingroup";
 import Removefriends from "./screens/Removefriends";
+import Settings from "./screens/Settings";
 import useBackgroundLocationUpdate from "./components/useBackgroundLocationUpdate";
 
 const Stack = createStackNavigator();
@@ -72,6 +76,7 @@ function MainTabs() {
 const App = () => {
   const user = useSelector((state) => state.user);
   const [isConnected, setIsConnected] = useState(true);
+  const [isGhostModeEnabled, setIsGhostModeEnabled] = useState(false);
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected);
@@ -90,94 +95,101 @@ const App = () => {
     });
   };
 
-  useBackgroundLocationUpdate(user?.user?._id);
+  useBackgroundLocationUpdate(user?.user?._id, isGhostModeEnabled);
   return (
-    <NavigationContainer>
-      {!isConnected ? (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              color: darkGreen,
-              paddingBottom: 10,
-            }}
-          >
-            Everywhere
-          </Text>
+    <GhostModeProvider value={{ isGhostModeEnabled, setIsGhostModeEnabled }}>
+      <NavigationContainer>
+        {!isConnected ? (
           <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 20,
-              borderColor: darkGreen,
-            }}
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
-            <MaterialCommunityIcons
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: darkGreen,
+                paddingBottom: 10
+              }}
+            >
+              Everywhere
+            </Text>
+            <View
               style={{
                 justifyContent: "center",
                 alignItems: "center",
+                borderRadius: 20,
+                borderColor: darkGreen
               }}
-              name="wifi-alert"
-              size={20}
-              color="gray"
-            />
+            >
+              <MaterialCommunityIcons
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+                name="wifi-alert"
+                size={20}
+                color="gray"
+              />
+            </View>
+            <Text style={{ fontSize: 15, color: "gray" }}>
+              connection required
+            </Text>
           </View>
-          <Text style={{ fontSize: 15, color: "gray" }}>
-            connection required
-          </Text>
-        </View>
-      ) : (
-        <Stack.Navigator>
-          {!user ? (
-            <>
-              <Stack.Screen
-                name="Auth"
-                component={AuthStack}
-                options={{ headerShown: false }}
-              />
-            </>
-          ) : (
-            <>
-              <Stack.Screen
-                name="Main"
-                component={MainTabs}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen name="Chat" component={ChatScreen} />
-              <Stack.Screen
-                name="Joingroup"
-                component={Joingroup}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen name="Addfriends" component={Addfriends} />
-              <Stack.Screen
-                name="ClubsPage"
-                component={ClubsPage}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="EventsPage"
-                component={EventsPage}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="TicketsPage"
-                component={TicketsPage}
-                options={{ headerShown: true }}
-              />
-              <Stack.Screen
-                name="Removefriends"
-                component={Removefriends}
-                options={{ headerShown: true }}
-              />
-            </>
-          )}
-        </Stack.Navigator>
-      )}
-    </NavigationContainer>
+        ) : (
+          <Stack.Navigator>
+            {!user ? (
+              <>
+                <Stack.Screen
+                  name="Auth"
+                  component={AuthStack}
+                  options={{ headerShown: false }}
+                />
+              </>
+            ) : (
+              <>
+                <Stack.Screen
+                  name="Main"
+                  component={MainTabs}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="Chat" component={ChatScreen} />
+                <Stack.Screen
+                  name="Joingroup"
+                  component={Joingroup}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="Addfriends" component={Addfriends} />
+                <Stack.Screen
+                  name="ClubsPage"
+                  component={ClubsPage}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="EventsPage"
+                  component={EventsPage}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="TicketsPage"
+                  component={TicketsPage}
+                  options={{ headerShown: true }}
+                />
+                <Stack.Screen
+                  name="Removefriends"
+                  component={Removefriends}
+                  options={{ headerShown: true }}
+                />
+                <Stack.Screen
+                  name="Settings"
+                  component={Settings}
+                  options={{ headerShown: true }}
+                />
+              </>
+            )}
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
+    </GhostModeProvider>
   );
 };
 
@@ -198,12 +210,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Dimensions.get("window").width * 0.1,
     right: Dimensions.get("window").height * 0.03,
-    zIndex: 999,
+    zIndex: 999
   },
   button: {
     backgroundColor: "gray",
     borderColor: "white",
     padding: 10,
-    borderRadius: 100,
-  },
+    borderRadius: 100
+  }
 });

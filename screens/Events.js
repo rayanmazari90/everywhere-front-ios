@@ -51,12 +51,6 @@ const EventCarousel = () => {
     const nextWeekEnd = new Date(nextWeekStart);
     nextWeekEnd.setDate(nextWeekStart.getDate() + 7);
 
-    console.log(`Filtering ${events.length} events for ${filterType}`);
-    console.log(`Today is ${today}`);
-    console.log(`Tomorrow is ${tomorrow}`);
-    console.log(`Next week starts ${nextWeekStart}`);
-    console.log(`Next week ends ${nextWeekEnd}`);
-
     switch (filterType) {
       case "Today":
         return events.filter((event) => {

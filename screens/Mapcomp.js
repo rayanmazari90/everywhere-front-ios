@@ -23,14 +23,12 @@ import appApi, {
 } from "./../services/appApi";
 import GhostModeContext from "../components/GhostModeContext";
 //import { UseClubsget } from './../services/appApi';
-
 //
 MapboxGL.setWellKnownTileServer("mapbox");
 MapboxGL.setAccessToken(
   "sk.eyJ1IjoicmF5bWF6bWF6IiwiYSI6ImNsaHFucmY3czBpbnAza252N3V6aG5pdXMifQ.og_YU_6Ow-klAdJE2xNELw"
 );
 const mapStyle = "mapbox://styles/mapbox/dark-v11";
-
 //MarkerComponent
 
 const Mapcomp = () => {
@@ -44,35 +42,6 @@ const Mapcomp = () => {
   const [heatmapData, setHeatmapData] = useState(null);
   const [mapKey, setMapKey] = useState(Math.random());
   const [locationsget] = useLocationsGetMutation();
-  const colors = [
-    "rgba(0, 0, 255, 0)",
-    "royalblue",
-    "cyan",
-    "lime",
-    "yellow",
-    "red",
-    "green",
-    "purple",
-    "orange"
-  ];
-
-  const generateDummyData = () => {
-    const data = [];
-    const numPoints = 100; // Number of random points to generate
-
-    for (let i = 0; i < numPoints; i++) {
-      const lat = Math.random() * 0.1 + 40.35; // Random latitude within a certain range in Madrid
-      const lng = Math.random() * 0.1 - 3.75; // Random longitude within a certain range in Madrid
-
-      data.push({
-        lat,
-        lng,
-        weight: Math.random() // Random weight for each point
-      });
-    }
-
-    return data;
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,7 +51,6 @@ const Mapcomp = () => {
         const response_loc = await locationsget();
         setlocations(response_loc.data);
         setHeatmapData(response_loc.data);
-        console.log("WAZZAAAAA", locations);
       } catch (err) {
         console.error(err);
       }
@@ -108,24 +76,21 @@ const Mapcomp = () => {
         >
           <TouchableOpacity
             onPressIn={() => {
-              console.log("pressed BITCH");
               navigation.navigate("ClubsPage", { club: club });
             }}
           >
             <ImageBackground
-              source={{ uri: image }}
+              source={{
+                uri: "https://img1.picmix.com/output/stamp/normal/3/0/0/2/672003_d26a7.gif"
+              }} // GIF URL
               style={{
-                width: 40,
-                height: 40,
+                width: 70,
+                height: 70,
                 borderRadius: 50,
-                overflow: "hidden",
-                borderWidth: 2,
-                borderColor: "white",
-                boxShadow:
-                  "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)",
-                backgroundImage: "linear-gradient(to bottom right, blue, red)",
+                //position: "relative",
                 backgroundClip: "padding-box",
-                padding: 2
+                paddingTop: 30,
+                paddingHorizontal: 15
               }}
               imageStyle={{
                 resizeMode: "cover",
@@ -133,12 +98,21 @@ const Mapcomp = () => {
               }}
             >
               <ImageBackground
+                source={{ uri: image }} // Club's image
                 style={{
-                  width: "100%",
-                  height: "100%",
+                  width: 40,
+                  height: 40,
                   backgroundColor: "transparent",
                   borderRadius: 125,
-                  overflow: "hidden"
+                  overflow: "hidden",
+                  overflow: "hidden",
+                  borderWidth: 2,
+                  borderColor: "white",
+                  boxShadow:
+                    "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)",
+                  backgroundImage:
+                    "linear-gradient(to bottom right, blue, red)",
+                  backgroundClip: "padding-box"
                 }}
               ></ImageBackground>
             </ImageBackground>
